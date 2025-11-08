@@ -5,6 +5,11 @@
 # (don't mess with these directly, just overwrite them here!)
 source ~/.local/share/omarchy/default/bash/rc
 
+# Load custom aliases
+if [ -f ~/.aliases ]; then
+  . ~/.aliases
+fi
+
 # Add your own exports, aliases, and functions here.
 #
 # Make an alias for invoking commands you use constantly

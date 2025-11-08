@@ -1,4 +1,8 @@
 --target=~
 --ignore=\.stowrc
+--ignore=README.md
+--ignore=sync.sh
+--ignore=\sync.sh
+--ignore=^sync
 --ignore=\.DS_Store
 --ignore=^atuin

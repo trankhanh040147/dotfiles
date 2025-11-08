@@ -15,9 +15,12 @@ alias aug='sudo apt-get upgrade'
 
 
 ### files 
+alias xa='xdg-open .'
 alias du='du -h'
 alias df='df -h'
 alias l.='ls -d .* --color=auto'
 alias ls='ls -F --color=auto'
 alias cl='clear && ls'
 
+### get secrets
+alias pwgit=''
