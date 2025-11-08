@@ -1,0 +1,23 @@
+### open configs 
+alias nnb='nvim ~/.aliases'
+alias rlb='. ~/.bashrc'
+
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias h='history'
+
+### apt 
+alias ai='sudo apt-get install'
+alias ar='sudo apt-get remove'
+alias au='sudo apt-get update'
+alias aug='sudo apt-get upgrade'
+
+
+### files 
+alias du='du -h'
+alias df='df -h'
+alias l.='ls -d .* --color=auto'
+alias ls='ls -F --color=auto'
+alias cl='clear && ls'
+
