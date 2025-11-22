@@ -1,6 +1,6 @@
 ### open configs 
 alias nnb='nvim ~/.aliases'
-alias rlb='. ~/.bashrc'
+alias rlb='. ~/.bashrc && source ~/.bash_profile'
 
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
@@ -24,3 +24,15 @@ alias cl='clear && ls'
 
 ### get secrets
 alias pwgit=''
+
+### Go
+alias grm='go run main.go'
+
+### network
+alias wf='sudo iwconfig wlan0 power off'
+
+### Docker
+alias dstart='docker start'
+alias dstop='docker stop'
+alias drestart='docker restart'
+alias dboot='docker start mongo1 redis1'

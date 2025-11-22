@@ -18,5 +18,10 @@ fi
 ### EXPORTS
 export PATH=$PATH:$(go env GOPATH)/bin:$HOME/go/bin
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
 ### BASH EXTS
 shopt -s extglob
+
