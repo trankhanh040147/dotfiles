@@ -20,42 +20,43 @@ echo "--- Starting Omarchy Config Sync ---"
 # List of "safe" directories to move.
 # Add or remove package names from this list as needed.
 CONFIG_DIRS=(
-    alacritty
-    autostart
-    btop
-    eza
-    fastfetch
-    fcitx5
-    fontconfig
-    ghostty
-    git
-    htop
-    hypr
-    kitty
-    lazydocker
-    lazygit
-    mako
-    mise
-    nvim
-    omarchy
-    swayosd
-    systemd
-    walker
-    waybar
-    xournalpp
+  alacritty
+  autostart
+  btop
+  eza
+  fastfetch
+  fcitx5
+  fontconfig
+  ghostty
+  git
+  htop
+  hypr
+  kitty
+  lazydocker
+  lazygit
+  mako
+  mise
+  nvim
+  omarchy
+  swayosd
+  systemd
+  walker
+  waybar
+  xournalpp
+  git
 )
 
 echo " "
 echo "Syncing config directories from ~/.config..."
 for dir in "${CONFIG_DIRS[@]}"; do
-    if [ -d "$HOME/.config/$dir" ]; then
-        echo "  Syncing '$dir'..."
-        mkdir -p "$dir/.config"
-        mv "$HOME/.config/$dir" "$dir/.config/"
-        git add "$dir"
-    else
-        echo "  Skipping '$dir' (Not found)"
-    fi
+  if [ -d "$HOME/.config/$dir" ]; then
+    echo "  Syncing '$dir'..."
+    mkdir -p "$dir/.config"
+    mv "$HOME/.config/$dir" "$dir/.config/"
+    git add "$dir"
+  else
+    echo "  Skipping '$dir' (Not found)"
+  fi
 done
 
 # ---
@@ -64,28 +65,28 @@ done
 # List of "safe" loose files to move.
 # They will be put into their own packages (e.g., 'starship.toml' -> 'starship' package)
 CONFIG_FILES=(
-    brave-flags.conf
-    chromium-flags.conf
-    mimeapps.list
-    omarchy.ttf
-    starship.toml
-    user-dirs.dirs
+  brave-flags.conf
+  chromium-flags.conf
+  mimeapps.list
+  omarchy.ttf
+  starship.toml
+  user-dirs.dirs
 )
 
 echo " "
 echo "Syncing loose files from ~/.config..."
 for file in "${CONFIG_FILES[@]}"; do
-    if [ -f "$HOME/.config/$file" ]; then
-        # Creates a package name from the file (e.g., "starship.toml" -> "starship")
-        pkg_name=$(echo "$file" | cut -d'.' -f1)
-        
-        echo "  Syncing '$file' into package '$pkg_name'..."
-        mkdir -p "$pkg_name/.config"
-        mv "$HOME/.config/$file" "$pkg_name/.config/"
-        git add "$pkg_name"
-    else
-        echo "  Skipping '$file' (Not found)"
-    fi
+  if [ -f "$HOME/.config/$file" ]; then
+    # Creates a package name from the file (e.g., "starship.toml" -> "starship")
+    pkg_name=$(echo "$file" | cut -d'.' -f1)
+
+    echo "  Syncing '$file' into package '$pkg_name'..."
+    mkdir -p "$pkg_name/.config"
+    mv "$HOME/.config/$file" "$pkg_name/.config/"
+    git add "$pkg_name"
+  else
+    echo "  Skipping '$file' (Not found)"
+  fi
 done
 
 # ---
@@ -93,21 +94,21 @@ done
 # ---
 # We will put these into the existing 'bash' package.
 HOME_FILES=(
-    .ideavimrc
-    .profile
-    .XCompose
-    .xprofile
+  .ideavimrc
+  .profile
+  .XCompose
+  .xprofile
 )
 
 echo " "
 echo "Syncing loose files from ~ into 'bash' package..."
 for file in "${HOME_FILES[@]}"; do
-    if [ -f "$HOME/$file" ]; then
-        echo "  Syncing '$file'..."
-        mv "$HOME/$file" "bash/"
-    else
-        echo "  Skipping '$file' (Not found)"
-    fi
+  if [ -f "$HOME/$file" ]; then
+    echo "  Syncing '$file'..."
+    mv "$HOME/$file" "bash/"
+  else
+    echo "  Skipping '$file' (Not found)"
+  fi
 done
 
 # Add any changes to the 'bash' package
