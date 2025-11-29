@@ -36,3 +36,7 @@ alias dstart='docker start'
 alias dstop='docker stop'
 alias drestart='docker restart'
 alias dboot='docker start mongo1 redis1'
+
+### Cursor 
+alias opt='z ~/opt &&'
+alias cursor='opt ./Cursor-2.0.69-x86_64.AppImage'
