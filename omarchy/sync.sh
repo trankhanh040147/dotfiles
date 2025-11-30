@@ -73,6 +73,38 @@ CONFIG_FILES=(
   user-dirs.dirs
 )
 
+# ---
+# Special case: Cursor - only sync User directory contents
+# ---
+echo " "
+echo "Syncing Cursor User configs..."
+if [ -d "$HOME/.config/Cursor/User" ]; then
+  echo "  Syncing 'Cursor' User directory..."
+  mkdir -p "cursor/.config/Cursor/User"
+  
+  # Copy settings.json if it exists
+  if [ -f "$HOME/.config/Cursor/User/settings.json" ]; then
+    cp "$HOME/.config/Cursor/User/settings.json" "cursor/.config/Cursor/User/"
+    echo "    Copied settings.json"
+  fi
+  
+  # Copy keybindings.json if it exists
+  if [ -f "$HOME/.config/Cursor/User/keybindings.json" ]; then
+    cp "$HOME/.config/Cursor/User/keybindings.json" "cursor/.config/Cursor/User/"
+    echo "    Copied keybindings.json"
+  fi
+  
+  # Copy snippets directory if it exists and is not empty
+  if [ -d "$HOME/.config/Cursor/User/snippets" ] && [ "$(ls -A "$HOME/.config/Cursor/User/snippets" 2>/dev/null)" ]; then
+    cp -r "$HOME/.config/Cursor/User/snippets" "cursor/.config/Cursor/User/"
+    echo "    Copied snippets directory"
+  fi
+  
+  git add cursor
+else
+  echo "  Skipping 'Cursor' (User directory not found)"
+fi
+
 echo " "
 echo "Syncing loose files from ~/.config..."
 for file in "${CONFIG_FILES[@]}"; do

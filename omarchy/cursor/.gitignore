@@ -1,0 +1,41 @@
+# Ignore cache and runtime files
+*.log
+Cache/
+CachedData/
+CachedExtensionVSIXs/
+CachedProfilesData/
+Code Cache/
+Cookies*
+DIPS*
+GPUCache/
+Local Storage/
+Session Storage/
+Service Worker/
+SharedStorage*
+TransportSecurity
+Trust Tokens*
+blob_storage/
+Crashpad/
+DawnGraphiteCache/
+DawnWebGPUCache/
+Backups/
+logs/
+process-monitor/
+sentry/
+WebStorage/
+machineid*
+languagepacks.json
+code.lock
+Network Persistent State
+preferences.json
+
+# Ignore workspace-specific storage
+workspaceStorage/
+History/
+
+# Keep only essential config files
+!.gitignore
+!User/settings.json
+!User/keybindings.json
+!User/snippets/
+
