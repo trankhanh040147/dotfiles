@@ -43,4 +43,10 @@ alias dbuild='docker compose build --no-cache '
 
 ### Cursor 
 alias opt='z ~/opt &&'
-alias cursor='opt ./Cursor-2.0.69-x86_64.AppImage'
+# alias cursor='opt ./Cursor-2.0.69-x86_64.AppImage'
+
+### Warp-cli
+alias warp-enable='sudo systemctl enable --now warp-svc'
+
+### revcli
+alias rv='revcli'

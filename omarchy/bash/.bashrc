@@ -15,7 +15,7 @@ fi
 # Make an alias for invoking commands you use constantly
 # alias p='python'
 
-### EXPORTS
+### ------- EXPORTS -------
 export PATH=$PATH:$(go env GOPATH)/bin:$HOME/go/bin
 
 # bun
@@ -24,4 +24,10 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 ### BASH EXTS
 shopt -s extglob
+
+### ------- SECRETS ------
+# Load secrets
+if [ -f ~/.secrets ]; then
+  . ~/.secrets
+fi
 
