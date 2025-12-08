@@ -181,46 +181,14 @@ alias signet-stg='z /home/vessel/opt/signet_stg && ./Signet'
 # zoxdide
 alias zob="z /home/vessel/Documents/'Obsidian Vault'/'6 - Full Notes'"
 
-# Obsidian vaults
-alias obsync=""
+# Sync
+alias scdd="cd /home/vessel/src/0_github/dotfiles && git pull" #sync-dotfiles-up
+alias scu=""                                                   # sync-up-all
+alias scd=""                                                   # sync-down-all
 
 #minio
 #mc alias set myminio http://localhost:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
-# ---------------------------------------------------------------------------
-# Fabric Peer Aliases for Org1
-# ---------------------------------------------------------------------------
-
-# Common variables for all peers in Org1
-export ORG1_MSP_PATH="/home/vessel/src/fabric-demo/test-network/organizations/peerOrganizations/org1.example.com"
-export ORG1_ADMIN_MSP_PATH="${ORG1_MSP_PATH}/users/Admin@org1.example.com/msp"
-
-# Alias for peer0.org1.example.com
-alias peer0='
-  export CORE_PEER_LOCALMSPID="Org1MSP"
-  export CORE_PEER_TLS_ENABLED=true
-  export CORE_PEER_MSPCONFIGPATH="${ORG1_ADMIN_MSP_PATH}"
-  export CORE_PEER_ADDRESS="localhost:7051"
-  export CORE_PEER_TLS_ROOTCERT_FILE="${ORG1_MSP_PATH}/peers/peer0.org1.example.com/tls/ca.crt"
-  echo "Switched CLI context to peer0.org1.example.com (localhost:7051)"
-'
-
-# Alias for peer1.org1.example.com
-alias peer1='
-  export CORE_PEER_LOCALMSPID="Org1MSP"
-  export CORE_PEER_TLS_ENABLED=true
-  export CORE_PEER_MSPCONFIGPATH="${ORG1_ADMIN_MSP_PATH}"
-  export CORE_PEER_ADDRESS="localhost:9051"
-  export CORE_PEER_TLS_ROOTCERT_FILE="${ORG1_MSP_PATH}/peers/peer1.org1.example.com/tls/ca.crt"
-  echo "Switched CLI context to peer1.org1.example.com (localhost:9051)"
-'
-
-# Alias for peer2.org1.example.com
-alias peer2='
-  export CORE_PEER_LOCALMSPID="Org1MSP"
-  export CORE_PEER_TLS_ENABLED=true
-  export CORE_PEER_MSPCONFIGPATH="${ORG1_ADMIN_MSP_PATH}"
-  export CORE_PEER_ADDRESS="localhost:9151"
-  export CORE_PEER_TLS_ROOTCERT_FILE="${ORG1_MSP_PATH}/peers/peer2.org1.example.com/tls/ca.crt"
-  echo "Switched CLI context to peer2.org1.example.com (localhost:9151)"
-'
+# Lazygit
+alias lzg="lazygit"
+alias lzd="lazydocker"
