@@ -35,7 +35,7 @@
         "when": "!isAuxiliaryWindowFocusedContext"
     },
     {
-        "key": "alt+n",
+        "key": "] h",
         "command": "workbench.action.compareEditor.nextChange",
         "when": "textCompareEditorVisible"
     },
@@ -45,7 +45,7 @@
         "when": "textCompareEditorVisible"
     },
     {
-        "key": "shift+alt+n",
+        "key": "[ h",
         "command": "workbench.action.compareEditor.previousChange",
         "when": "textCompareEditorVisible"
     },
@@ -53,5 +53,15 @@
         "key": "shift+alt+f5",
         "command": "-workbench.action.compareEditor.previousChange",
         "when": "textCompareEditorVisible"
+    },
+    {
+        "key": "ctrl+alt+w",
+        "command": "workbench.action.closeFolder",
+        "when": "emptyWorkspaceSupport && workbenchState != 'empty'"
+    },
+    {
+        "key": "ctrl+m f",
+        "command": "-workbench.action.closeFolder",
+        "when": "emptyWorkspaceSupport && workbenchState != 'empty'"
     }
 ]

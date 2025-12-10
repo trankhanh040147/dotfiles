@@ -1,6 +1,6 @@
 {
   "window.commandCenter": true,
-  "workbench.colorTheme": "Dracula Theme",
+  "workbench.colorTheme": "Monokai Pro (Filter Ristretto)",
 
   // --- Vim Key Handling ---
   "vim.handleKeys": {
@@ -54,5 +54,8 @@
       "before": ["g", "u"],
       "commands": ["references-view.findReferences"]
     }
-  ]
+  ],
+  "git.blame.editorDecoration.enabled": false,
+  "cursor.terminal.usePreviewBox": true,
+  "cursor.cpp.enablePartialAccepts": true
 }

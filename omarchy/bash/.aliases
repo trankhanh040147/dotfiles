@@ -50,3 +50,6 @@ alias warp-enable='sudo systemctl enable --now warp-svc'
 
 ### revcli
 alias rv='revcli'
+
+### lazygit
+alias lzg='lazygit'
