@@ -24,13 +24,30 @@
 
     # list aliases
     la = "!git config -l | grep alias | cut -c 7-"
+
+    # Restore working tree files (discard changes)
+    rs = restore
+    
+    # Restore staged files (unstage changes)
+    rss = restore --staged
+
+    # Reset
+    rst = reset
+    
+    # Soft reset (keep changes staged, undo commit)
+    rsts = reset --soft
+    
+    # Hard reset (discard all changes - DANGEROUS)
+    rsth = reset --hard
+    
+    gh-mode = !git config user.name "trankhanh040147" && git config user.email "trankhanh040147@gmail.com" && echo "Switched"
 [pull]
 	rebase = true
 [init]
 	defaultBranch = master
-[user]
-	email = trankhanh040147@gmail.com
-	name = trankhanh040147
+; [user]
+; 	email = trankhanh040147@gmail.com
+; 	name = trankhanh040147
 [credential "https://github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential

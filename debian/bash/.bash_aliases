@@ -192,3 +192,6 @@ alias scd=""                                                   # sync-down-all
 # Lazygit
 alias lzg="lazygit"
 alias lzd="lazydocker"
+
+# revcli
+alias rv="revcli"
