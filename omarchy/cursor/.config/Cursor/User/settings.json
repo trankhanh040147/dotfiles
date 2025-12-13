@@ -1,6 +1,6 @@
 {
   "window.commandCenter": true,
-  "workbench.colorTheme": "Monokai Pro (Filter Ristretto)",
+  "workbench.colorTheme": "Catppuccin Mocha",
 
   // --- Vim Key Handling ---
   "vim.handleKeys": {
