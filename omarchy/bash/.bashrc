@@ -31,3 +31,8 @@ if [ -f ~/.secrets ]; then
   . ~/.secrets
 fi
 
+
+### Navigations
+zz() {
+  z "$@" && ls --color=auto
+}

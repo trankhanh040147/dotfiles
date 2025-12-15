@@ -55,7 +55,8 @@
       "commands": ["references-view.findReferences"]
     }
   ],
-  "git.blame.editorDecoration.enabled": false,
+  "git.blame.editorDecoration.enabled": true,
   "cursor.terminal.usePreviewBox": true,
-  "cursor.cpp.enablePartialAccepts": true
+  "cursor.cpp.enablePartialAccepts": true,
+  "git.blame.statusBarItem.enabled": true
 }

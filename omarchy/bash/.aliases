@@ -2,6 +2,7 @@
 alias nna='nvim ~/.aliases'
 alias nnb='nvim ~/.bashrc'
 alias rlb='. ~/.bashrc && source ~/.bash_profile'
+alias nns='nvim ~/.secrets'
 
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
@@ -57,6 +58,9 @@ alias lzg='lazygit'
 ### yazi
 alias ya='yazi'
 
-### ls with colorful
+#### NAVIGATIONS
+# ls with colorful
+alias ls='ls --color=auto'
 alias l='ls -la --color=auto'
+# zoxide & list
 
