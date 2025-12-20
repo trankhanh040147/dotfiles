@@ -52,7 +52,7 @@ alias warp-enable='sudo systemctl enable --now warp-svc'
 ### revcli
 alias rv='revcli'
 ### langtut
-alias lang='langtut'
+alias lg='langtut'
 ### lazygit
 alias lzg='lazygit'
 ### yazi
