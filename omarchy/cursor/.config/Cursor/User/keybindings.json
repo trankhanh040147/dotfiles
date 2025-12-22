@@ -81,5 +81,20 @@
         "key": "ctrl+shift+g",
         "command": "-workbench.view.scm",
         "when": "workbench.scm.active"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "git.branchFrom",
+        "when": "!operationInProgress"
+    },
+    {
+        "key": "shift+alt+p",
+        "command": "git.pull",
+        "when": "!operationInProgress"
+    },
+    {
+        "key": "shift+alt+c",
+        "command": "git.checkout",
+        "when": "!operationInProgress"
     }
 ]

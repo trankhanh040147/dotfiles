@@ -4,6 +4,7 @@
 
   // --- Vim Key Handling ---
   "vim.handleKeys": {
+    "<C-b>": false,  // Let Cursor handle File Search
     "<C-p>": false,  // Let Cursor handle File Search
     "<C-f>": false,  // Let Cursor handle Find/Search View
     "<C-a>": false,  // Let Cursor handle Select All (optional, Vim uses ggVG)
