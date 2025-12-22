@@ -39,6 +39,20 @@
     
     # Hard reset (discard all changes - DANGEROUS)
     rsth = reset --hard
+
+    # Switch to sonsonha
+    as-son = "!f() { \
+        git config --local user.name 'sonsonha' && \
+        git config --local user.email 'sonha2002.12@gmail.com' && \
+        echo 'Switched local config to sonsonha'; \
+    }; f"
+
+    # Switch to trankhanh
+    as-tran = "!f() { \
+        git config --local user.name 'trankhanh040147' && \
+        git config --local user.email 'trankhanh040147@gmail.com' && \
+        echo 'Switched local config to trankhanh'; \
+    }; f"
 [pull]
 	rebase = true
 [init]
