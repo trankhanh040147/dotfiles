@@ -96,5 +96,17 @@
         "key": "shift+alt+c",
         "command": "git.checkout",
         "when": "!operationInProgress"
+    },
+    {
+        "key": "shift+alt+e",
+        "command": "workbench.action.problems.focus"
+    },
+    {
+        "key": "alt+x",
+        "command": "editor.action.showDefinitionPreviewHover"
+    },
+    {
+        "key": "alt+n",
+        "command": "explorer.newFile"
     }
 ]

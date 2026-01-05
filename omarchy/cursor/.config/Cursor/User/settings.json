@@ -1,6 +1,6 @@
 {
   "window.commandCenter": true,
-  "workbench.colorTheme": "Catppuccin Mocha",
+  "workbench.colorTheme": "Gruvbox Dark Medium",
 
   // --- Vim Key Handling ---
   "vim.handleKeys": {
@@ -12,6 +12,9 @@
     "<C-c>": false,  // Let Cursor handle Copy (optional)
     "<C-v>": false,   // Let Cursor handle Paste (optional)
     "<C-w>": false, //      (keep this for Window splitting)
+    "<C-d>": false, //      (keep this for Scrolling)
+    "<C-h>": false, //      (keep this for Scrolling)
+    // "<C-u>": false, //      (keep this for Scrolling)
     // REMOVED: <C-d>, <C-u> (keep these for Scrolling)
     // REMOVED: <C-o>, <C-i> (keep these for Jump List)
   },
@@ -47,7 +50,7 @@
     },
     // Go to Implementation (override Vim's default gi = go to last insert position)
     {
-      "before": ["g", "i"],
+      "before": ["g", "t"],
       "commands": ["editor.action.goToImplementation"]
     },
     // Go to Usages (Find All References)
@@ -56,8 +59,12 @@
       "commands": ["references-view.findReferences"]
     }
   ],
-  "git.blame.editorDecoration.enabled": true,
+  "git.blame.editorDecoration.enabled": false,
   "cursor.terminal.usePreviewBox": true,
   "cursor.cpp.enablePartialAccepts": true,
-  "git.blame.statusBarItem.enabled": true
+  "git.blame.statusBarItem.enabled": false,
+  "cursor.cpp.disabledLanguages": [
+    "plaintext"
+  ],
+  "git.openRepositoryInParentFolders": "always"
 }

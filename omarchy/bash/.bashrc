@@ -30,10 +30,9 @@ shopt -s extglob
 if [ -f ~/.secrets ]; then
   . ~/.secrets
 fi
-if [ -f ~/.nexus.secrets ]; then
-  . ~/.nexus.secrets
-fi
-
+# if [ -f ~/.nexus.secrets ]; then
+#   . ~/.nexus.secrets
+# fi
 
 ### Navigations
 zz() {
