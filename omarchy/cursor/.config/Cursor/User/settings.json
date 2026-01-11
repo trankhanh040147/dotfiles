@@ -1,6 +1,6 @@
 {
   "window.commandCenter": true,
-  "workbench.colorTheme": "Gruvbox Dark Medium",
+  "workbench.colorTheme": "Everforest Dark",
 
   // --- Vim Key Handling ---
   "vim.handleKeys": {
@@ -66,5 +66,6 @@
   "cursor.cpp.disabledLanguages": [
     "plaintext"
   ],
-  "git.openRepositoryInParentFolders": "always"
+  "git.openRepositoryInParentFolders": "always",
+  "cursor.composer.usageSummaryDisplay": "always"
 }
