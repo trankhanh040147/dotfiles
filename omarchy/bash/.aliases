@@ -64,3 +64,5 @@ alias ls='ls --color=auto'
 alias l='ls -la --color=auto'
 # zoxide & list
 
+# Claude Code
+alias cld='claude'

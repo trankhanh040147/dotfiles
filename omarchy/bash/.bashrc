@@ -38,3 +38,4 @@ fi
 zz() {
   z "$@" && ls --color=auto
 }
+export PATH="$HOME/.local/bin:$PATH"
