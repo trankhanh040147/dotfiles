@@ -1,3 +1,4 @@
+export EDITOR='nvim'
 alias nna='nvim $HOME/.bash_aliases'
 alias nnb='nvim $HOME/.bashrc'
 alias rlb='. ~/.bashrc'
@@ -56,7 +57,7 @@ alias dstart="docker start"
 alias dstop="docker stop"
 alias dlog="docker logs -f -n 0"
 alias dboot="dstart minio mongo01 broker redis"
-alias dbuild="docker rmi app -f && docker build --build-arg http_proxy=http://10.1.102.3:3128 --build-arg https_proxy=http://10.1.102.3:3128 ."
+alias dbuild="docker rmi app -f && docker build --build-arg http_proxy=http://10.1.102.3:3128 --build-arg https_proxy=http://10.1.102.3:3128 -t app ."
 
 # Base git alias
 alias g='git'
@@ -179,12 +180,16 @@ alias signet-dev='z /home/vessel/opt/signet_dev && ./Signet'
 alias signet-stg='z /home/vessel/opt/signet_stg && ./Signet'
 
 # zoxdide
-alias zob="z /home/vessel/Documents/'Obsidian Vault'/'6 - Full Notes'"
+alias zob="cd /home/vessel/src/0_github/obsidian-vault"
+zz() {
+  z "$@" && ls
+}
 
 # Sync
 alias scdd="cd /home/vessel/src/0_github/dotfiles && git pull" #sync-dotfiles-up
-alias scu=""                                                   # sync-up-all
-alias scd=""                                                   # sync-down-all
+alias scdu=""
+alias scu="cd /home/vessel/src/0_github/obsidian-vault && g pull" # sync-up-all
+alias scd="cd /home/vessel/src/0_github/obsidian-vault && git add . && git commit -m 'sync: arcadia' && git push" # sync-down-all
 
 #minio
 #mc alias set myminio http://localhost:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
@@ -195,3 +200,12 @@ alias lzd="lazydocker"
 
 # revcli
 alias rv="revcli"
+
+# yazi
+alias ya="yazi"
+
+#langtut
+alias lg="langtut"
+
+# fzf
+export FZF_CTRL_R_OPTS="--bind 'ctrl-y:execute-silent(echo -n {2..} | xclip -selection clipboard)+abort'"
