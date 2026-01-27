@@ -40,7 +40,7 @@
     # Hard reset (discard all changes - DANGEROUS)
     rsth = reset --hard
     
-    gh-mode = !git config user.name "trankhanh040147" && git config user.email "trankhanh040147@gmail.com" && echo "Switched"
+    gh = !git config user.name "trankhanh040147" && git config user.email "trankhanh040147@gmail.com" && echo "Switched"
 [pull]
 	rebase = true
 [init]
