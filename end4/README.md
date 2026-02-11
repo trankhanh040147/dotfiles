@@ -23,7 +23,7 @@ This directory is one of several setups in my main [dotfiles repo](..).
 
 3.  **Stow all packages:**
     ```bash
-    stow *
+    stow */
     ```
 
 This will create symlinks for all configs in your home directory.
@@ -72,6 +72,7 @@ git push
 | quickshell | Quickshell (Hyprland widget framework) |
 | starship | Starship prompt |
 | systemd | User systemd services |
+| tmux | Terminal multiplexer |
 | thorium-flags | Thorium browser flags |
 | user-dirs | XDG user directories |
 | wlogout | Logout menu |

@@ -36,6 +36,7 @@ CONFIG_DIRS=(
   nvim
   quickshell
   systemd
+  tmux
   wlogout
   xdg-desktop-portal
   xsettingsd
@@ -109,5 +110,5 @@ echo " "
 echo "--- Next Steps ---"
 echo "1. Review the synced files."
 echo "2. Run 'git add -A && git commit -m \"Initial end-4 config sync\"' to save."
-echo "3. To activate stow, remove the originals and run 'stow *'."
-echo "   Or use 'stow --adopt *' to adopt existing files in-place."
+echo "3. To activate stow, remove the originals and run 'stow */'."
+echo "   Or use 'stow --adopt */' to adopt existing files in-place."
