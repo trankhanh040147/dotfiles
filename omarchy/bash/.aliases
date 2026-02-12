@@ -66,3 +66,6 @@ alias l='ls -la --color=auto'
 
 # Claude Code
 alias cld='claude'
+
+### Git
+alias g='git'
