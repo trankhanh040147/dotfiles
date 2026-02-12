@@ -36,8 +36,10 @@ if status is-interactive # Commands to run in interactive sessions can go here
     abbr -a nna 'nvim ~/.config/fish/config.fish'
     abbr -a nnb 'nvim ~/.bashrc'
     abbr -a nnf 'nvim ~/.config/fish/config.fish'
+    abbr -a nnh 'cd ~/.config/hypr && nvim'
     abbr -a nns 'nvim ~/.secrets'
     abbr -a rlb 'source ~/.config/fish/config.fish'
+    abbr -a rlh 'hyprctl reload'
 
     ### Grep
     abbr -a h history
