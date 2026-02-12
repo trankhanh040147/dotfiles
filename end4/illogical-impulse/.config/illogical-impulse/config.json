@@ -31,7 +31,7 @@
         },
         "palette": {
             "accentColor": "",
-            "type": "scheme-rainbow"
+            "type": "scheme-content"
         },
         "transparency": {
             "automatic": true,
