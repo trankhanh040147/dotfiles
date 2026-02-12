@@ -73,6 +73,9 @@ if status is-interactive # Commands to run in interactive sessions can go here
     alias ya yazi
     alias cld claude
 
+    ### Git
+    alias g git
+
 end
 
 zoxide init fish | source
