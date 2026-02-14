@@ -53,6 +53,8 @@ Merge local (new Omarchy OS) configs with dotfiles/omarchy and end4. Local is so
 - Keep local theme: all `@catppuccin_*` (or your theme) and theme plugin from `~/.config/tmux`
 - Keybindings: use `omarchy/tmux/.config/tmux/tmux.reset.conf`
 - Options + plugins: from `omarchy/tmux/.config/tmux/tmux.conf` — copy options and TPM plugin list + plugin options, **exclude** theme plugin and all `@catppuccin_*` lines
+- **Restore icon configs** (local often lacks these): keep `@fzf-url-fzf-options` with icon in prompt (e.g. `--prompt="   "` with Nerd Font link icon U+F08E), `@fzf-url-history-limit`; add TPM install comments
+- **Add style configs**: powerline-style separators (U+E0B0 / U+E0B2) in status-left/right, window-status format with icon, zoom indicator in window-status-current-format, status-left/right-length, message/mode-style
 - Set `@sessionx-custom-paths` and `@sessionx-x-path` to `~/src/0_github/dotfiles`
 - Write merged result to `omarchy/tmux/.config/tmux/tmux.conf`; keep `tmux.reset.conf` as-is
 - Commit: e.g. "Tmux: omarchy keybindings/plugins, keep local theme"
@@ -61,7 +63,7 @@ Merge local (new Omarchy OS) configs with dotfiles/omarchy and end4. Local is so
 
 ## Phase 5a: Git — take omarchy
 
-- Do **not** overwrite `omarchy/git/` with localz
+- Do **not** overwrite `omarchy/git/` with local
 - Leave `omarchy/git/.config/git/config` unchanged
 - Include `stow git` when stowing
 
@@ -96,6 +98,12 @@ Merge local (new Omarchy OS) configs with dotfiles/omarchy and end4. Local is so
 
 - From repo: `cd ~/src/0_github/dotfiles/omarchy && stow *`
 - Test: Hyprland, fish (abbrs), kitty (cursor blink), tmux (keybindings + theme), git (`git config -l`), nvim (theme, avante, LSPs)
+
+---
+
+## Post-merge checklist (optional)
+
+- [x] **Tmux:** Restore icon configs (`@fzf-url-fzf-options` with link icon in prompt); add style configs (powerline separators, window-status with zoom icon, status lengths, message/mode-style). Requires Nerd Font in terminal.
 
 ---
 
