@@ -1,10 +1,12 @@
 return {
-	{ "neanias/everforest-nvim" },
+	{
+		"folke/tokyonight.nvim",
+		priority = 1000,
+	},
 	{
 		"LazyVim/LazyVim",
 		opts = {
-			colorscheme = "everforest",
-			background = "soft",
+			colorscheme = "tokyonight-night",
 		},
 	},
 }

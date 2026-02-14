@@ -55,10 +55,38 @@ After Phase 1, merge omarchy/end4 adjustments into the synced packages one at a 
 
 ---
 
-## Phase 3: Full stow and verify
+## Phase 3: Stow only safe packages and verify
 
-- [ ] From `omarchy/`: `stow */` (or stow each package).
-- [ ] Verify: Hyprland hotkeys, Kitty cursor/tabs, fish abbrs, tmux keybindings/plugins, nvim avante/keymaps.
+**Do not full-stow.** Stowing `hypr`, `waybar`, or `omarchy` can break keymaps and visuals because:
+
+- The **omarchy** package in the repo contains absolute symlinks to another machine (e.g. `/home/kenny/...`). Replacing your real `~/.config/omarchy` with it breaks theme, backgrounds, and anything that sources it (Hyprland theme, Waybar style).
+- **Hyprland** and **Waybar** depend on `~/.config/omarchy`. If omarchy is wrong, keymaps and bar/window behavior break.
+
+**Safe to stow (no dependency on omarchy):** `tmux`, `kitty`, `fish`, `nvim`, and optionally `git`. To stow hypr/waybar/omarchy without breakage: overwrite repo with local, fix absolute symlinks in omarchy (e.g. `current/background` → relative `theme/backgrounds/...`), then remove targets and `stow hypr waybar omarchy` and `rm -f ~/.config/omarchy.ttf`; run `hyprctl reload`.
+
+### 3.1 Stow
+
+- [ ] Unstow any previously stowed packages: `cd ~/src/0_github/dotfiles/omarchy && stow -D */`
+- [ ] Remove only the safe targets so stow can link (optional; only if they exist as real dirs):
+  - `rm -rf ~/.config/tmux ~/.config/kitty ~/.config/fish ~/.config/nvim`
+- [ ] Stow **only** the safe packages:
+  - `stow tmux kitty fish nvim`
+  - Optionally: `stow git` (if you want repo’s git config)
+- [ ] Do **not** run `stow */` and do **not** stow: `hypr`, `waybar`, `omarchy`, `bash`, or any package that pulls in or depends on `~/.config/omarchy`.
+
+### 3.2 Verify
+
+- [ ] Tmux: prefix Ctrl+A, splits, sessionx, floax.
+- [ ] Kitty: cursor blink/trail, Ctrl+F search, tabs.
+- [ ] Fish: abbrs (e.g. ls, nnh, lzg).
+- [ ] Nvim: `:Lazy`, avante, keymaps.
+- [ ] Hyprland / Waybar: leave as your **local** config (not stowed); keymaps and visuals stay correct.
+
+### 3.3 If something breaks (revert)
+
+- Unstow: `cd ~/src/0_github/dotfiles/omarchy && stow -D tmux kitty fish nvim git`
+- Restore from backup: `cp -a ~/dotfiles-backup-YYYYMMDD/config/* ~/.config/` (adjust backup date).
+- Reload Hyprland: `hyprctl reload`
 
 ---
 
@@ -68,4 +96,4 @@ After Phase 1, merge omarchy/end4 adjustments into the synced packages one at a 
 |-------|------|
 | 1 | Sync local → repo for hypr, kitty, fish, tmux, nvim, alacritty, waybar, walker. No merging. |
 | 2 | Merge tmux (keybindings/plugins), kitty (cursor), fish (abbrs), nvim (options/avante) one by one; test each. |
-| 3 | Stow all and do final verification. |
+| 3 | Stow **only** tmux, kitty, fish, nvim (and optionally git). Do **not** stow hypr, waybar, omarchy, bash. Verify; revert from backup if needed. |
