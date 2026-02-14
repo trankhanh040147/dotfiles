@@ -26,6 +26,7 @@ CONFIG_DIRS=(
   eza
   fastfetch
   fcitx5
+  fish
   fontconfig
   ghostty
   git
