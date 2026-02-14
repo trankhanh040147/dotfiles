@@ -30,27 +30,27 @@ After Phase 1, merge omarchy/end4 adjustments into the synced packages one at a 
 
 ### 2.1 Tmux — keybindings + plugins (keep local theme)
 
-- [ ] Copy keybindings from `omarchy/tmux/.config/tmux/tmux.reset.conf` (or merge into main conf).
-- [ ] Add TPM plugin list + plugin options from omarchy `tmux.conf` (exclude theme plugin; keep local status bar/theme).
-- [ ] Set `@sessionx-custom-paths` and `@sessionx-x-path` to `~/src/0_github/dotfiles`.
-- [ ] Optional: fzf-url icon prompt, status bar styling with icons.
+- [x] Copy keybindings from `omarchy/tmux/.config/tmux/tmux.reset.conf` (or merge into main conf).
+- [x] Add TPM plugin list + plugin options from omarchy `tmux.conf` (exclude theme plugin; keep local status bar/theme).
+- [x] Set `@sessionx-custom-paths` and `@sessionx-x-path` to `~/src/0_github/dotfiles`.
+- [x] Optional: fzf-url icon prompt, status bar styling with icons.
 - [ ] Stow tmux only, test: prefix, splits, sessionx, floax. Commit when good.
 
 ### 2.2 Kitty — cursor animations
 
-- [ ] Merge from end4: cursor block (`cursor_shape`, `cursor_beam_thickness`, `cursor_blink_interval`, `cursor_trail*`).
-- [ ] Optional: search/zoom keymaps from end4.
+- [x] Merge from end4: cursor block (`cursor_shape`, `cursor_beam_thickness`, `cursor_blink_interval`, `cursor_trail*`).
+- [x] Optional: search/zoom keymaps from end4.
 - [ ] Stow kitty only, test: cursor blink/trail, tabs. Commit when good.
 
 ### 2.3 Fish — abbrs
 
-- [ ] Merge abbrs (and aliases) from `end4/fish/.config/fish/config.fish` into `omarchy/fish/.config/fish/config.fish`.
+- [x] Merge abbrs (and aliases) from `end4/fish/.config/fish/config.fish` into `omarchy/fish/.config/fish/config.fish`.
 - [ ] Stow fish only, test: run abbrs (e.g. ls, nnh, lzg). Commit when good.
 
 ### 2.4 Nvim — options, keymaps, plugins, avante
 
-- [ ] Merge from omarchy (or saved): `lua/config/options.lua`, `keymaps.lua`, `autocmds.lua`, `lazy.lua`.
-- [ ] Add plugin: `lua/plugins/avante.lua`; optionally `disable-news-alert`, `snacks-animated-scrolling-off`, `example`. Skip theme plugins.
+- [x] Merge from omarchy (or saved): `lua/config/options.lua`, `keymaps.lua`, `autocmds.lua`, `lazy.lua`.
+- [x] Add plugin: `lua/plugins/avante.lua`; optionally `disable-news-alert`, `snacks-animated-scrolling-off`, `example`. Skip theme plugins.
 - [ ] Stow nvim only, run `:Lazy`, test avante and keymaps. Commit when good.
 
 ---
