@@ -18,7 +18,7 @@ Copy `~/.config/<pkg>` into `omarchy/<pkg>/.config/` so the repo holds your curr
 - [x] **1.6** alacritty — same for `omarchy/alacritty/.config/alacritty`
 - [x] **1.7** waybar — same for `omarchy/waybar/.config/waybar`
 - [x] **1.8** walker — same for `omarchy/walker/.config/walker`
-- [ ] **1.9** Commit: e.g. `omarchy: Phase 1 — sync local configs (hypr, kitty, fish, tmux, nvim, alacritty, waybar, walker)`
+- [x] **1.9** Commit: e.g. `omarchy: Phase 1 — sync local configs (hypr, kitty, fish, tmux, nvim, alacritty, waybar, walker)`
 
 **Note:** git is left as omarchy (do not overwrite with local) unless you decide otherwise.
 
