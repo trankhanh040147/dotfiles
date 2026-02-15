@@ -7,7 +7,6 @@ source /usr/share/cachyos-fish-config/cachyos-config.fish 2>/dev/null || true
 
 if status is-interactive
     set fish_greeting
-
     # Starship (from end4)
     type -q starship && starship init fish | source
     if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
@@ -30,11 +29,12 @@ if status is-interactive
     abbr -a q 'qs -c ii'
 
     ### Open configs
-    abbr -a nna 'nvim ~/.config/fish/config.fish'
+    # abbr -a nna 'nvim ~/.config/fish/config.fish'
     abbr -a nnb 'nvim ~/.bashrc'
     abbr -a nnf 'nvim ~/.config/fish/config.fish'
     abbr -a nnh 'cd ~/.config/hypr && nvim'
     abbr -a nns 'nvim ~/.secrets'
+    abbr -a nnc 'nvim ~/.config'
     abbr -a rlb 'source ~/.config/fish/config.fish'
     abbr -a rlh 'hyprctl reload'
 
@@ -75,7 +75,14 @@ if status is-interactive
 
     ### Git
     abbr -a g git
-end
 
-zoxide init fish | source
-fish_add_path $HOME/.local/bin
+    # Tools
+    zoxide init fish | source
+
+    # Paths
+    fish_add_path ~/.local/share/mise/shims
+    fish_add_path $HOME/.local/bin
+
+    # Bind
+    bind ctrl-h backward-kill-word --force
+end
