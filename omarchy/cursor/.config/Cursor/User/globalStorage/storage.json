@@ -1,0 +1,76 @@
+{
+    "telemetry.sqmId": "",
+    "telemetry.machineId": "2b66d0b3b612cf78eb0d338ee34bca2e8dad6f265337f1d02a3822d524002ac5",
+    "telemetry.macMachineId": "587d91806dad61056a77c3ab6fa0cbfe545bc824f6fca935183844c7078f7b84",
+    "telemetry.devDeviceId": "7ae02e23-3f78-4f06-ab7f-e2869b305d73",
+    "backupWorkspaces": {
+        "workspaces": [],
+        "folders": [
+            {
+                "folderUri": "file:///home/khanh/src/0_github/langtut"
+            }
+        ],
+        "emptyWindows": []
+    },
+    "windowControlHeight": 35,
+    "profileAssociations": {
+        "workspaces": {
+            "file:///home/khanh/src/0_github/langtut": "__default__profile__"
+        },
+        "emptyWindows": {}
+    },
+    "windowsState": {
+        "lastActiveWindow": {
+            "folder": "file:///home/khanh/src/0_github/langtut",
+            "backupPath": "/home/khanh/.config/Cursor/Backups/ce8e8915eb94548822a86adb370d8747",
+            "uiState": {
+                "mode": 0,
+                "x": 0,
+                "y": 0,
+                "width": 1600,
+                "height": 1000
+            }
+        },
+        "openedWindows": []
+    },
+    "theme": "vs-dark",
+    "themeBackground": "#1e1e2e",
+    "windowSplash": {
+        "zoomLevel": 0,
+        "baseTheme": "vs-dark",
+        "colorInfo": {
+            "foreground": "#cdd6f4",
+            "background": "#1e1e2e",
+            "editorBackground": "#1e1e2e",
+            "titleBarBackground": "#11111b",
+            "titleBarBorder": "rgba(0, 0, 0, 0)",
+            "activityBarBackground": "#11111b",
+            "activityBarBorder": "rgba(0, 0, 0, 0)",
+            "sideBarBackground": "#181825",
+            "sideBarBorder": "rgba(0, 0, 0, 0)",
+            "statusBarBackground": "#11111b",
+            "statusBarBorder": "rgba(0, 0, 0, 0)",
+            "statusBarNoFolderBackground": "#11111b"
+        },
+        "layoutInfo": {
+            "sideBarSide": "left",
+            "editorPartMinWidth": 220,
+            "titleBarHeight": 35,
+            "activityBarWidth": 0,
+            "sideBarWidth": 0,
+            "auxiliarySideBarWidth": 529,
+            "statusBarHeight": 0,
+            "windowBorder": false
+        }
+    },
+    "windowSplashWorkspaceOverride": {
+        "layoutInfo": {
+            "auxiliarySideBarWidth": [
+                529,
+                [
+                    "8c47d9128aa5e4ed06b6042cefd547bc"
+                ]
+            ]
+        }
+    }
+}

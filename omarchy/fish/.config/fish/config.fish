@@ -24,7 +24,8 @@ if status is-interactive
     alias df 'df -h'
 
     # Abbreviations (from end4)
-    abbr -a ls 'eza --icons'
+    # abbr -a ls 'eza --icons'
+    abbr -a ls 'eza -la --icons --git --header --group-directories-first --time-style=relative'
     abbr -a pamcan pacman
     abbr -a q 'qs -c ii'
 
@@ -79,10 +80,27 @@ if status is-interactive
     # Tools
     zoxide init fish | source
 
-    # Paths
+    # Paths – last added = first in PATH (fish_add_path prepends)
     fish_add_path ~/.local/share/mise/shims
     fish_add_path $HOME/.local/bin
+    # Add GOBIN when set (e.g. by mise).
+    # test -n (go env GOBIN); and fish_add_path (go env GOBIN)
+    fish_add_path ~/go/bin # Put last so locally installed Go tools take precedence
+    # Force all Go installations to the standard workspace
+    set -gx GOBIN $HOME/go/bin
+    # opencode
+    fish_add_path /home/khanh/.opencode/bin
 
-    # Bind
-    bind ctrl-h backward-kill-word --force
+    # Ctrl+Backspace → delete word (inside tmux, Ctrl+Backspace sends ctrl-h)
+    # Deferred to run after autopair plugin binds ctrl-h
+    function __ctrl_backspace_fix --on-event fish_prompt
+        bind ctrl-h backward-kill-word
+        functions -e __ctrl_backspace_fix
+    end
+
+    ### zoxide
+    function zz
+        z $argv && eza -la --icons --git --header --group-directories-first --time-style=relative
+    end
+
 end

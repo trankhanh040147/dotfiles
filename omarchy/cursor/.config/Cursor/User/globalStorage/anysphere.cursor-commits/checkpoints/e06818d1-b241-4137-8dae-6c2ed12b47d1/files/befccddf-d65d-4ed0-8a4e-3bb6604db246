@@ -1,0 +1,103 @@
+---
+name: Fix mode selection flow
+overview: "Fix three issues: (1) use Ctrl+P only for the command palette, (2) avoid sending an empty prompt after choosing a mode from the palette, and (3) show the current mode in the header bar."
+todos: []
+isProject: false
+---
+
+# Fix mode selection flow and palette shortcut
+
+## Issue summary
+
+1. **Ctrl+K opens command palette instead of Ctrl+P** — User expects the command palette to open with **Ctrl+P** (revert the addition of Ctrl+K as the primary or only shortcut).
+2. **After choosing mode, app jumps to response and errors "prompt is empty"** — When "Select Mode" is chosen from the palette, there is no pending message. The handler still calls `sendMessageAfterSession("", nil)`, which triggers the agent and returns `ErrEmptyPrompt`.
+3. **Missing visual for current mode** — The header bar does not show which mode is active (e.g. "Writing Coach", "Vocab Builder").
+
+## Correct behaviour (target)
+
+- **Command palette:** Open with **Ctrl+P** (and optionally "/" when editor is empty). Do not use Ctrl+K for the palette.
+- **After choosing a mode:** Show the new session with **current mode visible in the bar**; **do not** send a message. User types a prompt in the editor and presses Enter to send.
+
+---
+
+## 1. Revert command palette to Ctrl+P only
+
+- **[internal/tui/keys.go](internal/tui/keys.go)**  
+  - Commands binding: use only `key.WithKeys("ctrl+p")` and `key.WithHelp("ctrl+p", "commands")` (remove `"ctrl+k"`).
+- **[internal/tui/page/chat/chat.go](internal/tui/page/chat/chat.go)**  
+  - Where the commands binding is built for help (~1241–1246): use `key.WithKeys("ctrl+p")` and `key.WithHelp("ctrl+p", "commands")`. When editor is empty use `SetHelp("/ or ctrl+p", "commands")` (remove ctrl+k).
+- **[internal/tui/components/dialogs/commands/commands.go](internal/tui/components/dialogs/commands/commands.go)**  
+  - For the "Select Mode" command: remove the `Shortcut: "ctrl+k"` field (or set to `"ctrl+p"` so the palette shortcut is documented). No code path should rely on Ctrl+K to open the palette.
+
+---
+
+## 2. Do not send when prompt is empty after mode selection
+
+When the user picks a mode from the **command palette**, `pendingMessage` is never set, so `SessionCreatedWithModeMsg` carries `Text: ""`. The chat page currently always calls `sendMessageAfterSession(msg.Text, msg.Attachments)`, which leads to `agent.Run(..., "", ...)` and `ErrEmptyPrompt`.
+
+- **[internal/tui/page/chat/chat.go](internal/tui/page/chat/chat.go)** — handler for `chat.SessionCreatedWithModeMsg` (around 278–285):
+  - Keep: `p.setSession(msg.Session)`, clear `p.pendingMessage` and `p.pendingAttachments`.
+  - **Only** append `p.sendMessageAfterSession(msg.Text, msg.Attachments)` when there is something to send: `msg.Text != "" || len(msg.Attachments) > 0`.
+  - When not sending (empty prompt), optionally ensure the editor is focused so the user can type (e.g. set `p.focusedPane = PanelTypeEditor` and call `p.editor.Focus()` in the same update, or emit a small cmd that does it). This avoids leaving focus on an unexpected pane.
+
+Result: after choosing a mode from the palette, the new session is shown, mode is visible in the bar (see below), and no request is sent until the user types and presses Enter.
+
+---
+
+## 3. Show current mode in the header bar
+
+Session already has `Mode` ([internal/session/session.go](internal/session/session.go) — `Session.Mode`). The header already receives the session via `SetSession` and uses it in `details()`.
+
+- **[internal/tui/components/dialogs/mode/mode.go](internal/tui/components/dialogs/mode/mode.go)**  
+  - Add a function that returns a human-readable label for a mode ID, e.g. `DisplayName(modeID string) string`. Use the existing `ModeOption` list (e.g. `ModeWritingTutor.Name` for `"writing-tutor"`). For unknown IDs, return the ID or a short default like `"Custom"`.
+- **[internal/tui/components/chat/header/header.go](internal/tui/components/chat/header/header.go)**  
+  - In `details(availWidth int)`: when `h.session.Mode != ""`, add the current mode to the bar (e.g. prepend or append a part built from `mode.DisplayName(h.session.Mode)`). Use the same styling as other metadata (e.g. `s.Muted` / `s.Subtle`) so it fits the existing bar. This requires importing the mode package (e.g. `internal/tui/components/dialogs/mode`). Ensure the bar layout still fits (truncate or shorten if needed).
+
+Result: when a session has a mode set, the header bar shows it (e.g. "Writing Coach"); when mode is empty, the bar is unchanged.
+
+---
+
+## Files to touch
+
+
+| File                                                                                                         | Change                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| [internal/tui/keys.go](internal/tui/keys.go)                                                                 | Commands: keys `ctrl+p` only, help `ctrl+p`                                                                           |
+| [internal/tui/page/chat/chat.go](internal/tui/page/chat/chat.go)                                             | Commands help ctrl+p only; SessionCreatedWithModeMsg: send only if text or attachments; focus editor when not sending |
+| [internal/tui/components/dialogs/commands/commands.go](internal/tui/components/dialogs/commands/commands.go) | Select Mode: remove or change Shortcut from ctrl+k to ctrl+p                                                          |
+| [internal/tui/components/dialogs/mode/mode.go](internal/tui/components/dialogs/mode/mode.go)                 | Add `DisplayName(modeID string) string`                                                                               |
+| [internal/tui/components/chat/header/header.go](internal/tui/components/chat/header/header.go)               | Import mode; in `details()`, show mode label when `session.Mode != ""`                                                |
+
+
+---
+
+## Flow after changes
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant App
+  participant Palette as CommandsDialog
+  participant Mode as ModeDialog
+  participant Chat as ChatPage
+  participant Header
+
+  User->>App: ctrl+p
+  App->>Palette: OpenDialogMsg
+  User->>Palette: Select Mode, choose e.g. Writing Coach
+  Palette->>App: CloseDialogMsg, SelectModeMsg
+  App->>Mode: OpenDialogMsg (mode dialog)
+  User->>Mode: choose mode, Enter
+  Mode->>Chat: ModeSelectedMsg
+  Chat->>Chat: createSessionWithModeAndSend(mode)
+  Note over Chat: SessionCreatedWithModeMsg with Text ""
+  Chat->>Chat: setSession only, no sendMessageAfterSession
+  Chat->>Header: SetSession(session with Mode)
+  Header->>User: View shows mode in bar
+  User->>Chat: type prompt, Enter
+  Chat->>App: sendMessageAfterSession(text, nil)
+```
+
+
+
+No documentation change is required unless you want to update DEVELOPMENT.md to state that the palette is opened with Ctrl+P only (and that after choosing a mode, the user types a prompt then Enter).
