@@ -64,3 +64,7 @@ set timeoutlen=5000
 
 " [surround]
 Plug 'tpope/vim-surround'
+
+" i-ci-ve:ver25 enforces the beam (vertical caret) in Insert mode.
+" n-v-c:block enforces the block in Normal mode.
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50

@@ -6,3 +6,4 @@ history.txt
 .idea/
 omarchy/tmux/.config/tmux/plugins
 end4/tmux/.config/tmux/plugins
+debian/fish/.config/fish/conf.d/secrets.fish

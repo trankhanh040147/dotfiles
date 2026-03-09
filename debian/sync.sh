@@ -23,6 +23,11 @@ CONFIG_DIRS=(
   git
   tmux
   nvim
+  fish
+  starship
+  theme
+  kitty
+  mise
 )
 
 echo " "
