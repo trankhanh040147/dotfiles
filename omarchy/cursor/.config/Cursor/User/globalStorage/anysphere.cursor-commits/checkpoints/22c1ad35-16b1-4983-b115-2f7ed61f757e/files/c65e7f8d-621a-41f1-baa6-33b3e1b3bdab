@@ -1,0 +1,21 @@
+// sync.Pool — tái sử dụng buffer 4KB.
+// Chạy: go run sync_pool_demo.go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+	pool := sync.Pool{
+		New: func() any { return make([]byte, 0, 4096) },
+	}
+	for i := 0; i < 5; i++ {
+		buf := pool.Get().([]byte)
+		buf = buf[:0]
+		buf = append(buf, []byte("hello")...)
+		fmt.Printf("get %d: len=%d cap=%d\n", i, len(buf), cap(buf))
+		pool.Put(buf)
+	}
+}

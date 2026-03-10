@@ -1,0 +1,42 @@
+// Echo gRPC server: Echo (unary) + StreamEcho (server stream).
+// Chạy từ repo root: go run ./03_grpc/examples/server/
+package main
+
+import (
+	"context"
+	"log"
+	"net"
+
+	echov1 "example.com/leetcode/custom/03_grpc/examples/echo/v1"
+	"google.golang.org/grpc"
+)
+
+type server struct {
+	echov1.UnimplementedEchoServiceServer
+}
+
+func (s *server) Echo(_ context.Context, req *echov1.EchoRequest) (*echov1.EchoResponse, error) {
+	return &echov1.EchoResponse{Message: req.Message}, nil
+}
+
+func (s *server) StreamEcho(req *echov1.EchoRequest, stream echov1.EchoService_StreamEchoServer) error {
+	for i := 0; i < 5; i++ {
+		if err := stream.Send(&echov1.EchoResponse{Message: req.Message}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func main() {
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatal(err)
+	}
+	s := grpc.NewServer()
+	echov1.RegisterEchoServiceServer(s, &server{})
+	log.Println("listening on :50051")
+	if err := s.Serve(lis); err != nil {
+		log.Fatal(err)
+	}
+}

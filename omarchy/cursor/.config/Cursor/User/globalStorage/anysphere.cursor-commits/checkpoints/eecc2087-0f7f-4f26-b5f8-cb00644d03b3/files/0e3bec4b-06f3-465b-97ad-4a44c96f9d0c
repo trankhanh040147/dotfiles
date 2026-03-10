@@ -1,0 +1,24 @@
+# 06 — Security & Crypto
+
+Ôn **Streaming AEAD**, **ML-KEM** (post-quantum), **Data Diode** — "wow factor" từ CV (file transfer pipeline, Data Diode hardware).
+
+## Kiến thức cần cover
+
+- **Streaming AEAD:** Authenticated Encryption with Associated Data cho stream; tại sao dùng khi transfer file từng chunk.
+- **ML-KEM:** Post-quantum cryptography (KEM); dùng trong pipeline bảo mật.
+- **Data Diode:** Concept, unidirectional network gap; tại sao cần file chunking + streaming khi vượt giới hạn phần cứng.
+
+## Liên hệ CV
+
+- "Post-quantum secure file transfer pipeline for unidirectional Data Diode hardware... file chunking, Streaming AEAD, and ML-KEM encryption."
+
+## Tài liệu
+
+- Notes: [0_interview/notes/04_Security_Crypto.md](../0_interview/notes/04_Security_Crypto.md)
+- Roadmap: SEC-01 – SEC-03 trong [00_Roadmap.md](../0_interview/00_Roadmap.md)
+
+## Câu hỏi phỏng vấn điển hình
+
+1. Data Diode là gì? Tại sao cần pipeline đặc biệt?
+2. Tại sao dùng Streaming AEAD thay vì encrypt từng block độc lập?
+3. ML-KEM dùng để làm gì trong pipeline?

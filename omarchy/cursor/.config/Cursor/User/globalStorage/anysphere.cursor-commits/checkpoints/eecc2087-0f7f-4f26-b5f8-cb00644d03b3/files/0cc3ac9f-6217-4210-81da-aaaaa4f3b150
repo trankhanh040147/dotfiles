@@ -1,0 +1,25 @@
+# 07 — OS & Network
+
+Ôn **blocking I/O**, **Netpoller**, **TCP vs UDP**, **fd/epoll** — giải thích 5k connections, WebSocket vs WebRTC.
+
+## Kiến thức cần cover
+
+- **Blocking I/O & Netpoller:** Go không block OS thread khi gọi network syscall (`net.Conn.Read`, `http.Get`); Netpoller (network poller) đăng ký fd, goroutine block được đưa ra khỏi thread cho đến khi I/O ready.
+- **5k goroutines block đọc:** Không tạo 5k OS threads; vài thread + epoll (Linux) đủ phục vụ 5k fd.
+- **TCP vs UDP:** Bắt buộc nắm để so sánh WebRTC (media qua UDP) và WebSocket (TCP).
+- **Linux:** File descriptors, `ulimit` (cho WebSocket), epoll.
+
+## Liên hệ CV
+
+- "5,000 concurrent connections" — Netpoller, fd limit.
+- WebSocket (TCP) vs WebRTC (UDP cho media) — SYS-02.
+
+## Tài liệu
+
+- Notes: [0_interview/notes/05_OS_Network.md](../0_interview/notes/05_OS_Network.md)
+- Roadmap: NET-01 – NET-03 trong [00_Roadmap.md](../0_interview/00_Roadmap.md)
+
+## Câu hỏi phỏng vấn điển hình
+
+1. Go xử lý 5.000 goroutines đang block đọc socket: điều gì xảy ra ở scheduler? Có 5.000 OS thread không? Netpoller làm gì?
+2. TCP vs UDP trong bối cảnh WebRTC và WebSocket?

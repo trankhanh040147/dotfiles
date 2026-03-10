@@ -7,58 +7,60 @@
         "workspaces": [],
         "folders": [
             {
-                "folderUri": "file:///home/khanh/src/0_github/langtut"
+                "folderUri": "file:///home/khanh/src/0_github/leetcode/custom"
             }
         ],
         "emptyWindows": []
     },
-    "windowControlHeight": 35,
+    "windowControlHeight": 42,
     "profileAssociations": {
         "workspaces": {
-            "file:///home/khanh/src/0_github/langtut": "__default__profile__"
+            "file:///home/khanh/src/0_github/langtut": "__default__profile__",
+            "file:///home/khanh/src/0_github/leetcode/custom": "__default__profile__"
         },
         "emptyWindows": {}
     },
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/khanh/src/0_github/langtut",
-            "backupPath": "/home/khanh/.config/Cursor/Backups/ce8e8915eb94548822a86adb370d8747",
+            "folder": "file:///home/khanh/src/0_github/leetcode/custom",
+            "backupPath": "/home/khanh/.config/Cursor/Backups/a62d728820254181d3d0e9735526e8df",
             "uiState": {
                 "mode": 0,
                 "x": 0,
                 "y": 0,
-                "width": 1600,
-                "height": 1000
+                "width": 1920,
+                "height": 1080,
+                "zoomLevel": 1
             }
         },
         "openedWindows": []
     },
-    "theme": "vs-dark",
-    "themeBackground": "#1e1e2e",
+    "theme": "hc-black",
+    "themeBackground": "#121212",
     "windowSplash": {
         "zoomLevel": 0,
-        "baseTheme": "vs-dark",
+        "baseTheme": "hc-black",
         "colorInfo": {
-            "foreground": "#cdd6f4",
-            "background": "#1e1e2e",
-            "editorBackground": "#1e1e2e",
-            "titleBarBackground": "#11111b",
-            "titleBarBorder": "rgba(0, 0, 0, 0)",
-            "activityBarBackground": "#11111b",
-            "activityBarBorder": "rgba(0, 0, 0, 0)",
-            "sideBarBackground": "#181825",
-            "sideBarBorder": "rgba(0, 0, 0, 0)",
-            "statusBarBackground": "#11111b",
-            "statusBarBorder": "rgba(0, 0, 0, 0)",
-            "statusBarNoFolderBackground": "#11111b"
+            "foreground": "#eaeaea",
+            "background": "#121212",
+            "editorBackground": "#121212",
+            "titleBarBackground": "#121212",
+            "titleBarBorder": "#333333",
+            "activityBarBackground": "#121212",
+            "activityBarBorder": "#333333",
+            "sideBarBackground": "#121212",
+            "sideBarBorder": "#333333",
+            "statusBarBackground": "#121212",
+            "statusBarBorder": "#333333",
+            "windowBorder": "#333333"
         },
         "layoutInfo": {
             "sideBarSide": "left",
             "editorPartMinWidth": 220,
             "titleBarHeight": 35,
             "activityBarWidth": 0,
-            "sideBarWidth": 0,
-            "auxiliarySideBarWidth": 529,
+            "sideBarWidth": 305,
+            "auxiliarySideBarWidth": 588,
             "statusBarHeight": 0,
             "windowBorder": false
         }
@@ -66,9 +68,10 @@
     "windowSplashWorkspaceOverride": {
         "layoutInfo": {
             "auxiliarySideBarWidth": [
-                529,
+                588,
                 [
-                    "8c47d9128aa5e4ed06b6042cefd547bc"
+                    "8c47d9128aa5e4ed06b6042cefd547bc",
+                    "8f7569f5f8da29712889b43a1353854e"
                 ]
             ]
         }

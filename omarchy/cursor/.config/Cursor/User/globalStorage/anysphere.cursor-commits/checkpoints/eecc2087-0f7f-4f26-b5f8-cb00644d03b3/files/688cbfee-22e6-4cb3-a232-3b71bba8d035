@@ -1,0 +1,29 @@
+# 01 — Go Core & Concurrency
+
+Ôn **Go core**, **concurrency**, **memory/GC** và **profiling** — bám CV (5k WebSocket, API 200%, memory footprint).
+
+## Kiến thức cần cover
+
+- **Goroutine & Scheduler:** M:N model, preemption, context switching; Netpoller (network I/O không block OS thread).
+- **Memory:** Escape analysis, heap vs stack; liên hệ tối ưu API.
+- **GC:** GOGC, tri-color mark and sweep; liên hệ WebSocket memory footprint.
+- **Concurrency:** Channels (buffered/unbuffered), đóng channel an toàn; `sync` (WaitGroup, Mutex/RWMutex, Once, Pool); `context` (cancellation, timeout, deadline, values).
+- **Patterns:** Worker pool, fan-out/fan-in, pipeline, errgroup.
+- **Profiling:** `pprof` (CPU, heap), trace.
+
+## Liên hệ CV
+
+- "Engineered high-performance WebSocket server... 5,000 concurrent connections" → goroutine, netpoller, worker pool.
+- "Boosting API performance by 200%" (BESSFU) → memory, GC, escape analysis.
+- "WebSocket memory footprint" → GC tuning, sync.Pool.
+
+## Tài liệu
+
+- Notes: [0_interview/notes/01_Golang_Core.md](../0_interview/notes/01_Golang_Core.md)
+- Roadmap: GO-01 – GO-05 trong [00_Roadmap.md](../0_interview/00_Roadmap.md)
+
+## Câu hỏi phỏng vấn điển hình
+
+1. **Netpoller:** Hệ thống WebSocket của bạn xử lý 5.000 kết nối; mỗi kết nối một goroutine, tất cả đang block đọc. Go có tạo 5.000 OS thread không? Netpoller đóng vai trò gì?
+2. **Worker pool:** Áp dụng worker pool cho 5k WebSocket streams như thế nào? Trade-off với "one goroutine per connection".
+3. **Memory/GC:** Giải thích việc tối ưu API 200% — escape analysis, allocation, GC có liên quan thế nào?

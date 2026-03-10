@@ -1,6 +1,6 @@
 {
   "window.commandCenter": true,
-  "workbench.colorTheme": "Catppuccin Mocha",
+  "workbench.colorTheme": "Matte Black",
   // --- Vim Key Handling ---
   "vim.handleKeys": {
     "<C-b>": false, // Let Cursor handle File Search

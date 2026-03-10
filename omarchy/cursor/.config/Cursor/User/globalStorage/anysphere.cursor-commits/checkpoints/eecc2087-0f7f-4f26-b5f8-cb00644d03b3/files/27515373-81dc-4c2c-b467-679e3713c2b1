@@ -1,0 +1,27 @@
+# 08 — CV Stories
+
+Mỗi bullet trong CV được chuyển thành **story** có cấu trúc: context, challenge, solution, result, trade-off, follow-up cho interview.
+
+## Danh sách story (theo resume)
+
+| ID | Bullet CV | Gợi ý focus |
+|----|-----------|---------------|
+| CV-01 | Database Indexing Management System — detect/sync indexes, giảm 30% latency | Sync cơ chế, lock, đo lường |
+| CV-02 | High-throughput schemas cho chat — Mini Apps, Community, LLM Chatbox 200k users | Schema design, scale, khó nhất là gì |
+| CV-03 | WebSocket server 5k concurrent connections — real-time AI stream | Kiến trúc, heartbeat, scaling |
+| CV-04 | Post-quantum file transfer — Data Diode, chunking, Streaming AEAD, ML-KEM | Data Diode, crypto, chunking |
+| CV-05 | WebRTC crash → route non-media qua WebSocket, 720p ổn định | Vấn đề, giải pháp, trade-off |
+| CV-06 | BESSFU: MySQL overhaul — query/schema optimization, SME database | Giảm lỗi DB, cách làm |
+| CV-07 | BESSFU: Oracle APEX + Golang adoption — API 200%, thời gian phát triển giảm một nửa | Tại sao APEX rồi chuyển Go |
+| CV-08 | BESSFU: Page load 60% — static, indexing, caching, CDN | Các bước tối ưu |
+
+## Cấu trúc gợi ý mỗi story
+
+- **Context:** Dự án, vai trò, bối cảnh.
+- **Challenge:** Vấn đề cần giải quyết.
+- **Solution:** Hành động cụ thể (kiến trúc, code, process).
+- **Result:** Số liệu, impact.
+- **Trade-off / bài học:** Nếu làm lại sẽ điều chỉnh gì.
+- **Interview Q&A:** Câu hỏi hay gặp + gợi ý trả lời.
+
+Các folder con (CV-01, CV-02, …) có thể tạo sau khi viết nội dung chi tiết từng story.
