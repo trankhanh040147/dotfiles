@@ -1,0 +1,45 @@
+package main
+
+import (
+	"context"
+	"log"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"chatmessaging/internal/config"
+	"chatmessaging/internal/db"
+	"chatmessaging/internal/worker"
+)
+
+func main() {
+	cfg, err := config.Load("worker")
+	if err != nil {
+		log.Fatalf("load config: %v", err)
+	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	initCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	defer cancel()
+
+	pool, err := db.ConnectPostgres(initCtx, cfg.PostgresURL)
+	if err != nil {
+		log.Fatalf("connect postgres: %v", err)
+	}
+	defer pool.Close()
+
+	redisClient, err := db.ConnectRedis(initCtx, cfg.RedisAddr, cfg.RedisDB)
+	if err != nil {
+		log.Fatalf("connect redis: %v", err)
+	}
+	defer redisClient.Close()
+
+	w := worker.NewOutboxWorker(pool, redisClient, cfg.OutboxPollInterval, cfg.OutboxBatchSize)
+	log.Printf("worker started with poll interval %s and batch size %d", cfg.OutboxPollInterval, cfg.OutboxBatchSize)
+	if err := w.Run(ctx); err != nil && err != context.Canceled {
+		log.Fatalf("worker stopped with error: %v", err)
+	}
+	log.Printf("worker stopped")
+}

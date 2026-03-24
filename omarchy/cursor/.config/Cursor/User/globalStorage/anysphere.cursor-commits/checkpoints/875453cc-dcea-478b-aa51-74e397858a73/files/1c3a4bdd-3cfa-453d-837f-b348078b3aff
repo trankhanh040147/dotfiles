@@ -1,0 +1,411 @@
+package core
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type Service struct {
+	pool *pgxpool.Pool
+}
+
+func NewService(pool *pgxpool.Pool) *Service {
+	return &Service{pool: pool}
+}
+
+func (s *Service) CreateMessage(ctx context.Context, in CreateMessageInput) (Message, bool, error) {
+	if in.ClientMessageID == "" {
+		return Message{}, false, errors.New("client_message_id is required")
+	}
+	if in.Type == "" {
+		return Message{}, false, errors.New("message type is required")
+	}
+	if len(in.Body) == 0 {
+		in.Body = json.RawMessage(`{}`)
+	}
+
+	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return Message{}, false, fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	var existing Message
+	err = tx.QueryRow(
+		ctx,
+		`SELECT id, conversation_id, seq, sender_id, client_message_id, type, body_json, status, created_at
+		 FROM messages
+		 WHERE sender_id = $1 AND client_message_id = $2`,
+		in.SenderID, in.ClientMessageID,
+	).Scan(
+		&existing.ID, &existing.ConversationID, &existing.Sequence, &existing.SenderID,
+		&existing.ClientMessageID, &existing.Type, &existing.Body, &existing.Status, &existing.CreatedAt,
+	)
+	if err == nil {
+		if err := tx.Commit(ctx); err != nil {
+			return Message{}, false, fmt.Errorf("commit existing tx: %w", err)
+		}
+		return existing, true, nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return Message{}, false, fmt.Errorf("check duplicate message: %w", err)
+	}
+
+	if _, err := tx.Exec(
+		ctx,
+		`INSERT INTO conversation_sequences(conversation_id, last_seq)
+		 VALUES ($1, 0)
+		 ON CONFLICT (conversation_id) DO NOTHING`,
+		in.ConversationID,
+	); err != nil {
+		return Message{}, false, fmt.Errorf("seed conversation sequence: %w", err)
+	}
+
+	var seq int64
+	if err := tx.QueryRow(
+		ctx,
+		`UPDATE conversation_sequences
+		 SET last_seq = last_seq + 1
+		 WHERE conversation_id = $1
+		 RETURNING last_seq`,
+		in.ConversationID,
+	).Scan(&seq); err != nil {
+		return Message{}, false, fmt.Errorf("next sequence: %w", err)
+	}
+
+	msg := Message{
+		ID:              uuid.New(),
+		ConversationID:  in.ConversationID,
+		Sequence:        seq,
+		SenderID:        in.SenderID,
+		ClientMessageID: in.ClientMessageID,
+		Type:            in.Type,
+		Body:            in.Body,
+		Status:          "sent",
+	}
+
+	if err := tx.QueryRow(
+		ctx,
+		`INSERT INTO messages(
+			id, conversation_id, seq, sender_id, client_message_id, type, body_json, status
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		RETURNING created_at`,
+		msg.ID, msg.ConversationID, msg.Sequence, msg.SenderID,
+		msg.ClientMessageID, msg.Type, msg.Body, msg.Status,
+	).Scan(&msg.CreatedAt); err != nil {
+		return Message{}, false, fmt.Errorf("insert message: %w", err)
+	}
+
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		return Message{}, false, fmt.Errorf("marshal outbox payload: %w", err)
+	}
+
+	if _, err := tx.Exec(
+		ctx,
+		`INSERT INTO outbox_events(
+			id, aggregate_type, aggregate_id, event_type, payload_json, status
+		) VALUES ($1,$2,$3,$4,$5,'pending')`,
+		uuid.New(), "conversation", msg.ConversationID, "message.created", payload,
+	); err != nil {
+		return Message{}, false, fmt.Errorf("insert outbox event: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return Message{}, false, fmt.Errorf("commit tx: %w", err)
+	}
+	return msg, false, nil
+}
+
+func (s *Service) ListMessages(
+	ctx context.Context,
+	conversationID uuid.UUID,
+	limit int,
+	beforeSeq int64,
+) ([]Message, error) {
+	if limit <= 0 || limit > 200 {
+		limit = 50
+	}
+
+	query := `SELECT id, conversation_id, seq, sender_id, client_message_id, type, body_json, status, created_at
+			  FROM messages
+			  WHERE conversation_id = $1`
+	args := []any{conversationID}
+	if beforeSeq > 0 {
+		query += ` AND seq < $2`
+		args = append(args, beforeSeq)
+	}
+	query += ` ORDER BY seq DESC LIMIT $` + fmt.Sprintf("%d", len(args)+1)
+	args = append(args, limit)
+
+	rows, err := s.pool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("query messages: %w", err)
+	}
+	defer rows.Close()
+
+	out := make([]Message, 0, limit)
+	for rows.Next() {
+		var m Message
+		if err := rows.Scan(
+			&m.ID, &m.ConversationID, &m.Sequence, &m.SenderID,
+			&m.ClientMessageID, &m.Type, &m.Body, &m.Status, &m.CreatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan message: %w", err)
+		}
+		out = append(out, m)
+	}
+	return out, rows.Err()
+}
+
+func (s *Service) MarkRead(
+	ctx context.Context,
+	conversationID uuid.UUID,
+	userID uuid.UUID,
+	lastReadMessageID uuid.UUID,
+) error {
+	_, err := s.RecordReadAck(ctx, ReadAckInput{
+		ConversationID:    conversationID,
+		UserID:            userID,
+		DeviceID:          "api",
+		LastReadMessageID: lastReadMessageID,
+	})
+	return err
+}
+
+func (s *Service) RecordDeliveryAck(ctx context.Context, in DeliveryAckInput) (DeliveryAckResult, error) {
+	if in.MessageID == uuid.Nil {
+		return DeliveryAckResult{}, errors.New("message_id is required")
+	}
+	if in.UserID == uuid.Nil {
+		return DeliveryAckResult{}, errors.New("user_id is required")
+	}
+	if in.DeviceID == "" {
+		return DeliveryAckResult{}, errors.New("device_id is required")
+	}
+
+	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return DeliveryAckResult{}, fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	var conversationID uuid.UUID
+	if err := tx.QueryRow(
+		ctx,
+		`SELECT conversation_id
+		 FROM messages
+		 WHERE id = $1`,
+		in.MessageID,
+	).Scan(&conversationID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return DeliveryAckResult{}, errors.New("message not found")
+		}
+		return DeliveryAckResult{}, fmt.Errorf("lookup message conversation: %w", err)
+	}
+
+	receiptID := uuid.New()
+	tag, err := tx.Exec(
+		ctx,
+		`INSERT INTO message_receipts(id, message_id, user_id, device_id, receipt_type, receipt_at)
+		 VALUES ($1, $2, $3, $4, 'delivered', now())
+		 ON CONFLICT (message_id, user_id, device_id, receipt_type) DO NOTHING`,
+		receiptID, in.MessageID, in.UserID, in.DeviceID,
+	)
+	if err != nil {
+		return DeliveryAckResult{}, fmt.Errorf("insert delivery receipt: %w", err)
+	}
+	isDuplicate := isDuplicateInsert(tag.RowsAffected())
+
+	payload, err := json.Marshal(map[string]any{
+		"conversation_id": conversationID,
+		"message_id":      in.MessageID,
+		"user_id":         in.UserID,
+		"device_id":       in.DeviceID,
+		"duplicate":       isDuplicate,
+	})
+	if err != nil {
+		return DeliveryAckResult{}, fmt.Errorf("marshal delivery outbox payload: %w", err)
+	}
+	if err := s.insertOutboxEventTx(ctx, tx, "conversation", conversationID, "message.delivery_ack", payload); err != nil {
+		return DeliveryAckResult{}, err
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return DeliveryAckResult{}, fmt.Errorf("commit delivery ack tx: %w", err)
+	}
+
+	return DeliveryAckResult{
+		ReceiptID:      receiptID,
+		ConversationID: conversationID,
+		MessageID:      in.MessageID,
+		Duplicate:      isDuplicate,
+	}, nil
+}
+
+func (s *Service) RecordReadAck(ctx context.Context, in ReadAckInput) (ReadAckResult, error) {
+	if in.ConversationID == uuid.Nil {
+		return ReadAckResult{}, errors.New("conversation_id is required")
+	}
+	if in.UserID == uuid.Nil {
+		return ReadAckResult{}, errors.New("user_id is required")
+	}
+	if in.LastReadMessageID == uuid.Nil {
+		return ReadAckResult{}, errors.New("last_read_message_id is required")
+	}
+	if in.DeviceID == "" {
+		return ReadAckResult{}, errors.New("device_id is required")
+	}
+
+	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return ReadAckResult{}, fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	var targetSeq int64
+	if err := tx.QueryRow(
+		ctx,
+		`SELECT seq
+		 FROM messages
+		 WHERE id = $1 AND conversation_id = $2`,
+		in.LastReadMessageID, in.ConversationID,
+	).Scan(&targetSeq); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ReadAckResult{}, errors.New("last_read_message_id does not belong to conversation")
+		}
+		return ReadAckResult{}, fmt.Errorf("lookup last read message seq: %w", err)
+	}
+
+	var (
+		currentLastReadID *uuid.UUID
+		currentSeq        int64
+	)
+	if err := tx.QueryRow(
+		ctx,
+		`SELECT m.last_read_message_id, COALESCE(msg.seq, 0)
+		 FROM members m
+		 LEFT JOIN messages msg ON msg.id = m.last_read_message_id
+		 WHERE m.conversation_id = $1 AND m.user_id = $2
+		 FOR UPDATE`,
+		in.ConversationID, in.UserID,
+	).Scan(&currentLastReadID, &currentSeq); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ReadAckResult{}, errors.New("member not found")
+		}
+		return ReadAckResult{}, fmt.Errorf("load current read pointer: %w", err)
+	}
+
+	advanced := shouldAdvanceReadPointer(currentSeq, targetSeq)
+	if advanced {
+		if _, err := tx.Exec(
+			ctx,
+			`UPDATE members
+			 SET last_read_message_id = $1
+			 WHERE conversation_id = $2 AND user_id = $3`,
+			in.LastReadMessageID, in.ConversationID, in.UserID,
+		); err != nil {
+			return ReadAckResult{}, fmt.Errorf("update read pointer: %w", err)
+		}
+	}
+
+	receiptID := uuid.New()
+	tag, err := tx.Exec(
+		ctx,
+		`INSERT INTO message_receipts(id, message_id, user_id, device_id, receipt_type, receipt_at)
+		 VALUES ($1, $2, $3, $4, 'read', now())
+		 ON CONFLICT (message_id, user_id, device_id, receipt_type) DO NOTHING`,
+		receiptID, in.LastReadMessageID, in.UserID, in.DeviceID,
+	)
+	if err != nil {
+		return ReadAckResult{}, fmt.Errorf("insert read receipt: %w", err)
+	}
+	readReceiptDuplicate := isDuplicateInsert(tag.RowsAffected())
+
+	payload, err := json.Marshal(map[string]any{
+		"conversation_id":       in.ConversationID,
+		"user_id":               in.UserID,
+		"device_id":             in.DeviceID,
+		"last_read_message_id":  in.LastReadMessageID,
+		"advanced_read_pointer": advanced,
+		"previous_read_message": currentLastReadID,
+	})
+	if err != nil {
+		return ReadAckResult{}, fmt.Errorf("marshal read outbox payload: %w", err)
+	}
+	if err := s.insertOutboxEventTx(ctx, tx, "conversation", in.ConversationID, "message.read_ack", payload); err != nil {
+		return ReadAckResult{}, err
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return ReadAckResult{}, fmt.Errorf("commit read ack tx: %w", err)
+	}
+
+	return ReadAckResult{
+		ConversationID:       in.ConversationID,
+		LastReadMessageID:    in.LastReadMessageID,
+		AdvancedReadPointer:  advanced,
+		DuplicateReadReceipt: readReceiptDuplicate,
+	}, nil
+}
+
+func (s *Service) insertOutboxEventTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	aggregateType string,
+	aggregateID uuid.UUID,
+	eventType string,
+	payload json.RawMessage,
+) error {
+	if _, err := tx.Exec(
+		ctx,
+		`INSERT INTO outbox_events(
+			id, aggregate_type, aggregate_id, event_type, payload_json, status
+		) VALUES ($1, $2, $3, $4, $5, 'pending')`,
+		uuid.New(), aggregateType, aggregateID, eventType, payload,
+	); err != nil {
+		return fmt.Errorf("insert outbox event: %w", err)
+	}
+	return nil
+}
+
+func isDuplicateInsert(rowsAffected int64) bool {
+	return rowsAffected == 0
+}
+
+func shouldAdvanceReadPointer(currentSeq, targetSeq int64) bool {
+	return targetSeq > currentSeq
+}
+
+func (s *Service) ListConversationMemberIDs(
+	ctx context.Context,
+	conversationID uuid.UUID,
+) ([]uuid.UUID, error) {
+	rows, err := s.pool.Query(
+		ctx,
+		`SELECT user_id
+		 FROM members
+		 WHERE conversation_id = $1`,
+		conversationID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("query conversation members: %w", err)
+	}
+	defer rows.Close()
+
+	var members []uuid.UUID
+	for rows.Next() {
+		var userID uuid.UUID
+		if err := rows.Scan(&userID); err != nil {
+			return nil, fmt.Errorf("scan conversation member: %w", err)
+		}
+		members = append(members, userID)
+	}
+	return members, rows.Err()
+}

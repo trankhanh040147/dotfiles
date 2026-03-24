@@ -1,0 +1,44 @@
+package main
+
+import (
+	"context"
+	"log"
+	"net/http"
+	"time"
+
+	"chatmessaging/internal/config"
+	"chatmessaging/internal/core"
+	"chatmessaging/internal/db"
+	"chatmessaging/internal/transport"
+)
+
+func main() {
+	cfg, err := config.Load("gateway")
+	if err != nil {
+		log.Fatalf("load config: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	pool, err := db.ConnectPostgres(ctx, cfg.PostgresURL)
+	if err != nil {
+		log.Fatalf("connect postgres: %v", err)
+	}
+	defer pool.Close()
+
+	svc := core.NewService(pool)
+	h := transport.NewGatewayHandler(svc)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
+	})
+	mux.HandleFunc("/ws", h.HandleWS)
+
+	log.Printf("gateway listening on %s", cfg.HTTPAddr)
+	if err := http.ListenAndServe(cfg.HTTPAddr, mux); err != nil {
+		log.Fatalf("gateway server stopped: %v", err)
+	}
+}

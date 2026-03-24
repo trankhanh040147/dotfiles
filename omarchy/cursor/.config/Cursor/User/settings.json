@@ -1,6 +1,6 @@
 {
   "window.commandCenter": true,
-  "workbench.colorTheme": "Matte Black",
+  "workbench.colorTheme": "Tokyo Night",
   // --- Vim Key Handling ---
   "vim.handleKeys": {
     "<C-b>": false, // Let Cursor handle File Search
@@ -100,5 +100,8 @@
   ],
   "git.openRepositoryInParentFolders": "always",
   "cursor.composer.usageSummaryDisplay": "always",
-  "workbench.statusBar.visible": false
+  "workbench.statusBar.visible": false,
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+  }
 }

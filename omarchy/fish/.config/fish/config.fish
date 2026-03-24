@@ -32,6 +32,7 @@ if status is-interactive
     ### Open configs
     # abbr -a nna 'nvim ~/.config/fish/config.fish'
     abbr -a nnb 'nvim ~/.bashrc'
+    abbr -a nna 'nvim ~/.config/fish/conf.d/abbrs.fish'
     abbr -a nnf 'nvim ~/.config/fish/config.fish'
     abbr -a nnh 'cd ~/.config/hypr && nvim'
     abbr -a nns 'nvim ~/.secrets'
@@ -42,6 +43,7 @@ if status is-interactive
     abbr -a h history
 
     ### Pacman / yay
+    abbr -a pac 'sudo pacman '
     abbr -a ai 'sudo pacman -S'
     abbr -a ar 'sudo pacman -Rns'
     abbr -a au 'sudo pacman -Sy'

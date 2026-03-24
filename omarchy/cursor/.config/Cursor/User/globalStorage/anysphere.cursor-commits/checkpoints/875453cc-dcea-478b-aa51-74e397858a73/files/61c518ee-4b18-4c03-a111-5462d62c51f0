@@ -1,0 +1,83 @@
+package db
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+var schemaStatements = []string{
+	`CREATE TABLE IF NOT EXISTS users (
+		id UUID PRIMARY KEY,
+		username TEXT NOT NULL UNIQUE,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+	)`,
+	`CREATE TABLE IF NOT EXISTS conversations (
+		id UUID PRIMARY KEY,
+		type TEXT NOT NULL CHECK(type IN ('direct', 'group')),
+		name TEXT NOT NULL DEFAULT '',
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+	)`,
+	`CREATE TABLE IF NOT EXISTS members (
+		id UUID PRIMARY KEY,
+		conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+		user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		role TEXT NOT NULL DEFAULT 'member',
+		last_read_message_id UUID,
+		joined_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		UNIQUE(conversation_id, user_id)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_members_user_conv ON members(user_id, conversation_id)`,
+	`CREATE TABLE IF NOT EXISTS conversation_sequences (
+		conversation_id UUID PRIMARY KEY REFERENCES conversations(id) ON DELETE CASCADE,
+		last_seq BIGINT NOT NULL DEFAULT 0
+	)`,
+	`CREATE TABLE IF NOT EXISTS messages (
+		id UUID PRIMARY KEY,
+		conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+		seq BIGINT NOT NULL,
+		sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		client_message_id TEXT NOT NULL,
+		type TEXT NOT NULL,
+		body_json JSONB NOT NULL,
+		status TEXT NOT NULL DEFAULT 'sent',
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		UNIQUE(conversation_id, seq),
+		UNIQUE(sender_id, client_message_id)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_messages_conv_seq_desc ON messages(conversation_id, seq DESC)`,
+	`CREATE TABLE IF NOT EXISTS message_receipts (
+		id UUID PRIMARY KEY,
+		message_id UUID NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+		user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		device_id TEXT NOT NULL,
+		receipt_type TEXT NOT NULL CHECK(receipt_type IN ('delivered', 'read')),
+		receipt_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		UNIQUE(message_id, user_id, device_id, receipt_type)
+	)`,
+	`CREATE TABLE IF NOT EXISTS outbox_events (
+		id UUID PRIMARY KEY,
+		aggregate_type TEXT NOT NULL,
+		aggregate_id UUID NOT NULL,
+		event_type TEXT NOT NULL,
+		payload_json JSONB NOT NULL,
+		status TEXT NOT NULL DEFAULT 'pending',
+		retry_count INT NOT NULL DEFAULT 0,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		published_at TIMESTAMPTZ
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_outbox_status_created_at ON outbox_events(status, created_at)`,
+}
+
+func EnsureSchema(ctx context.Context, pool *pgxpool.Pool) error {
+	for _, stmt := range schemaStatements {
+		if _, err := pool.Exec(ctx, stmt); err != nil {
+			return fmt.Errorf("exec schema statement: %w", err)
+		}
+	}
+	return nil
+}

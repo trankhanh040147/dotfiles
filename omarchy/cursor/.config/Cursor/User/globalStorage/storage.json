@@ -7,60 +7,70 @@
         "workspaces": [],
         "folders": [
             {
-                "folderUri": "file:///home/khanh/src/0_github/leetcode/custom"
+                "folderUri": "file:///home/khanh/src/0_github/portfolio/v1"
+            },
+            {
+                "folderUri": "file:///home/khanh/src/0_github/portfolio/v2"
             }
         ],
         "emptyWindows": []
     },
-    "windowControlHeight": 42,
+    "windowControlHeight": 29,
     "profileAssociations": {
         "workspaces": {
             "file:///home/khanh/src/0_github/langtut": "__default__profile__",
-            "file:///home/khanh/src/0_github/leetcode/custom": "__default__profile__"
+            "file:///home/khanh/src/0_github/leetcode/custom": "__default__profile__",
+            "file:///home/khanh/src/0_github/revcli": "__default__profile__",
+            "file:///home/khanh/src/0_github/leetcode/prep/vulcan/01_system_design": "__default__profile__",
+            "file:///home/khanh/src/0_github/prepf": "__default__profile__",
+            "file:///home/khanh/src/0_github/leetcode/prep": "__default__profile__",
+            "file:///home/khanh/src/0_github/portfolio/v1": "__default__profile__",
+            "file:///home/khanh/src/0_github/portfolio/v2": "__default__profile__"
         },
         "emptyWindows": {}
     },
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/khanh/src/0_github/leetcode/custom",
-            "backupPath": "/home/khanh/.config/Cursor/Backups/a62d728820254181d3d0e9735526e8df",
+            "folder": "file:///home/khanh/src/0_github/portfolio/v2",
+            "backupPath": "/home/khanh/.config/Cursor/Backups/cffd439decd00c5c85c78d71ef45c04e",
             "uiState": {
                 "mode": 0,
                 "x": 0,
                 "y": 0,
-                "width": 1920,
-                "height": 1080,
-                "zoomLevel": 1
+                "width": 950,
+                "height": 1034,
+                "zoomLevel": -1
             }
         },
         "openedWindows": []
     },
-    "theme": "hc-black",
-    "themeBackground": "#121212",
+    "theme": "vs-dark",
+    "themeBackground": "#1a1b26",
     "windowSplash": {
         "zoomLevel": 0,
-        "baseTheme": "hc-black",
+        "baseTheme": "vs-dark",
         "colorInfo": {
-            "foreground": "#eaeaea",
-            "background": "#121212",
-            "editorBackground": "#121212",
-            "titleBarBackground": "#121212",
-            "titleBarBorder": "#333333",
-            "activityBarBackground": "#121212",
-            "activityBarBorder": "#333333",
-            "sideBarBackground": "#121212",
-            "sideBarBorder": "#333333",
-            "statusBarBackground": "#121212",
-            "statusBarBorder": "#333333",
-            "windowBorder": "#333333"
+            "foreground": "#787c99",
+            "background": "#1a1b26",
+            "editorBackground": "#1a1b26",
+            "titleBarBackground": "#16161e",
+            "titleBarBorder": "#101014",
+            "activityBarBackground": "#16161e",
+            "activityBarBorder": "#16161e",
+            "sideBarBackground": "#16161e",
+            "sideBarBorder": "#101014",
+            "statusBarBackground": "#16161e",
+            "statusBarBorder": "#101014",
+            "statusBarNoFolderBackground": "#16161e",
+            "windowBorder": "#0d0f17"
         },
         "layoutInfo": {
             "sideBarSide": "left",
             "editorPartMinWidth": 220,
             "titleBarHeight": 35,
             "activityBarWidth": 0,
-            "sideBarWidth": 305,
-            "auxiliarySideBarWidth": 588,
+            "sideBarWidth": 286,
+            "auxiliarySideBarWidth": 458,
             "statusBarHeight": 0,
             "windowBorder": false
         }
@@ -68,10 +78,14 @@
     "windowSplashWorkspaceOverride": {
         "layoutInfo": {
             "auxiliarySideBarWidth": [
-                588,
+                458,
                 [
                     "8c47d9128aa5e4ed06b6042cefd547bc",
-                    "8f7569f5f8da29712889b43a1353854e"
+                    "feaaea184728a7a01d22cd45bf733d68",
+                    "e802da40862340c54c4e63837bcdb452",
+                    "1925e0d509abedf8a2b71c93d16723fd",
+                    "be69d6c65d19b8678cea7f3da666d6e8",
+                    "64faf2c33a3db583b6414203badc3799"
                 ]
             ]
         }

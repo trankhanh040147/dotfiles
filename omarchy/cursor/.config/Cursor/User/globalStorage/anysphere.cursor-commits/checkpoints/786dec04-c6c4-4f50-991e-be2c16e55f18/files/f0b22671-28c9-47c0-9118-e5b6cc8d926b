@@ -1,0 +1,214 @@
+# CODEBASE BREAKDOWN
+
+This document explains exactly how the current `impl` codebase is structured, what each file does, and how requests flow through the system.
+
+## 1) High-level architecture
+
+The implementation is split into 4 runnable binaries:
+
+- `migrate`: applies schema to PostgreSQL.
+- `api`: REST endpoints for read/query operations.
+- `gateway`: WebSocket entrypoint for realtime client events.
+- `worker`: background outbox publisher (Postgres -> Redis Streams).
+
+Shared logic lives under `internal/`:
+
+- `config`: environment-based config loader and validation.
+- `db`: DB/Redis connectors and schema bootstrap.
+- `core`: domain/business logic (message create, ack delivery, ack read).
+- `transport`: HTTP/WS protocol handlers that call `core`.
+- `worker`: outbox polling/publish loop.
+
+## 2) Folder-by-folder map
+
+### `cmd/`
+
+- `cmd/migrate/main.go`
+  - Loads config.
+  - Connects to Postgres.
+  - Runs `db.EnsureSchema`.
+
+- `cmd/api/main.go`
+  - Loads config and Postgres.
+  - Builds `core.Service`.
+  - Serves:
+    - `GET /healthz`
+    - `GET /messages`
+    - `POST /read`
+
+- `cmd/gateway/main.go`
+  - Loads config and Postgres.
+  - Builds `core.Service` + WS handler.
+  - Serves:
+    - `GET /healthz`
+    - `GET /ws`
+
+- `cmd/worker/main.go`
+  - Loads config.
+  - Connects to Postgres + Redis.
+  - Starts outbox polling loop with graceful shutdown on SIGINT/SIGTERM.
+
+### `internal/config/`
+
+- `internal/config/config.go`
+  - Defines `Config` struct.
+  - Loads env vars with defaults (`POSTGRES_URL`, `REDIS_ADDR`, `HTTP_ADDR`, etc.).
+  - Validates:
+    - `OUTBOX_BATCH_SIZE > 0`
+    - `PRESENCE_TTL > HEARTBEAT_INTERVAL`
+
+### `internal/db/`
+
+- `internal/db/postgres.go`
+  - `ConnectPostgres`: creates `pgxpool`, pings DB.
+
+- `internal/db/redis.go`
+  - `ConnectRedis`: creates Redis client, pings Redis.
+
+- `internal/db/schema.go`
+  - `EnsureSchema`: executes DDL statements for all tables/indexes.
+  - Tables:
+    - `users`
+    - `conversations`
+    - `members`
+    - `conversation_sequences`
+    - `messages`
+    - `message_receipts`
+    - `outbox_events`
+
+### `internal/core/`
+
+- `internal/core/types.go`
+  - Domain DTOs:
+    - `Message`
+    - `CreateMessageInput`
+    - `DeliveryAckInput/Result`
+    - `ReadAckInput/Result`
+
+- `internal/core/service.go`
+  - Main business logic with PostgreSQL transactions.
+  - `CreateMessage`:
+    - checks submit idempotency (`sender_id + client_message_id`)
+    - allocates per-conversation sequence
+    - inserts into `messages`
+    - writes `message.created` into `outbox_events`
+  - `RecordDeliveryAck`:
+    - inserts `delivered` receipt idempotently
+    - writes `message.delivery_ack` outbox event
+  - `RecordReadAck`:
+    - validates message belongs to conversation
+    - updates read pointer monotonically (`last_read_message_id` only advances)
+    - inserts `read` receipt idempotently
+    - writes `message.read_ack` outbox event
+  - `ListMessages` and `MarkRead` helper APIs.
+
+- `internal/core/service_test.go`
+  - Unit tests for helper semantics:
+    - dedup detection
+    - monotonic read-pointer advance logic
+
+### `internal/transport/`
+
+- `internal/transport/ws.go`
+  - WebSocket protocol adapter.
+  - Parses `user_id` and optional `device_id` from query params.
+  - Handles events:
+    - `heartbeat` -> `heartbeat_ack`
+    - `send_message` -> `server_ack`
+    - `ack_delivery` -> `delivery_ack_ok`
+    - `ack_read` -> `read_ack_ok`
+  - On invalid payload/event, returns `error` envelope.
+
+- `internal/transport/api.go`
+  - REST protocol adapter.
+  - `GET /messages` calls `core.ListMessages`.
+  - `POST /read` calls `core.MarkRead` (which delegates to `RecordReadAck`).
+
+### `internal/worker/`
+
+- `internal/worker/outbox.go`
+  - Polls `outbox_events` rows with `status='pending'`.
+  - Publishes each row to Redis Stream `chat.conv.{aggregate_id}`.
+  - Marks row `published` on success.
+  - Increments `retry_count` if publish fails.
+
+## 3) Infra + developer tooling
+
+- `docker-compose.yml`
+  - Starts `postgres:16` and `redis:7`.
+  - Includes health checks and Postgres volume.
+
+- `Makefile`
+  - Common commands:
+    - `make infra-up`
+    - `make migrate`
+    - `make run-worker`
+    - `make run-api`
+    - `make run-gateway`
+    - `make test`
+    - `make build`
+
+- `.env.example`
+  - Documents environment knobs and defaults.
+
+- `migrations/001_init.sql`
+  - SQL mirror of programmatic schema in `internal/db/schema.go`.
+
+- `bench/k6/smoke.js`
+  - minimal `healthz` smoke check via k6.
+
+## 4) Runtime data flow (current implementation)
+
+### Send message flow
+
+1. Client sends `send_message` to `gateway` WS.
+2. `gateway` calls `core.CreateMessage`.
+3. `core` transaction writes `messages` + `outbox_events(message.created)`.
+4. `gateway` replies with `server_ack`.
+5. `worker` later publishes outbox row to Redis Stream.
+
+### Delivery ack flow
+
+1. Client sends `ack_delivery`.
+2. `gateway` calls `core.RecordDeliveryAck`.
+3. `core` inserts `message_receipts` (`delivered`) idempotently.
+4. `core` writes `outbox_events(message.delivery_ack)`.
+5. `gateway` replies with `delivery_ack_ok`.
+
+### Read ack flow
+
+1. Client sends `ack_read`.
+2. `gateway` calls `core.RecordReadAck`.
+3. `core` validates message ownership in conversation.
+4. `core` advances `members.last_read_message_id` only if seq increases.
+5. `core` inserts `message_receipts` (`read`) idempotently.
+6. `core` writes `outbox_events(message.read_ack)`.
+7. `gateway` replies with `read_ack_ok`.
+
+## 5) Current boundaries and known gaps
+
+Implemented:
+
+- transactional message write with outbox
+- idempotent submit and ack persistence
+- monotonic read pointer update
+- outbox -> Redis Streams publisher
+
+Not yet implemented (planned next):
+
+- stream consumer fanout to recipient gateways (Phase 4)
+- presence/session registry and reconnect replay (Phase 4)
+- stronger authz/rate limit hardening (later phase)
+- deep integration tests with real Postgres/Redis for ack/outbox end-to-end
+
+## 6) Where to start reading as a developer
+
+Recommended reading order:
+
+1. `cmd/gateway/main.go`
+2. `internal/transport/ws.go`
+3. `internal/core/service.go`
+4. `internal/worker/outbox.go`
+5. `internal/db/schema.go`
+
+This sequence gives you request entrypoint -> domain logic -> async publish -> persistence model.

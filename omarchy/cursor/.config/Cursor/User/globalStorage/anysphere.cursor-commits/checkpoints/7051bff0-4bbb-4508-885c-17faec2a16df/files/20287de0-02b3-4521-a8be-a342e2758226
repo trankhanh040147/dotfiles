@@ -1,0 +1,118 @@
+package worker
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type OutboxWorker struct {
+	pool         *pgxpool.Pool
+	redis        *redis.Client
+	pollInterval time.Duration
+	batchSize    int
+}
+
+func NewOutboxWorker(
+	pool *pgxpool.Pool,
+	redisClient *redis.Client,
+	pollInterval time.Duration,
+	batchSize int,
+) *OutboxWorker {
+	return &OutboxWorker{
+		pool:         pool,
+		redis:        redisClient,
+		pollInterval: pollInterval,
+		batchSize:    batchSize,
+	}
+}
+
+func (w *OutboxWorker) Run(ctx context.Context) error {
+	ticker := time.NewTicker(w.pollInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
+			if err := w.flushOnce(ctx); err != nil {
+				log.Printf("outbox flush failed: %v", err)
+			}
+		}
+	}
+}
+
+func (w *OutboxWorker) flushOnce(ctx context.Context) error {
+	rows, err := w.pool.Query(
+		ctx,
+		`SELECT id, aggregate_id, event_type, payload_json
+		 FROM outbox_events
+		 WHERE status = 'pending'
+		 ORDER BY created_at
+		 LIMIT $1`,
+		w.batchSize,
+	)
+	if err != nil {
+		return fmt.Errorf("query pending outbox: %w", err)
+	}
+	defer rows.Close()
+
+	type eventRow struct {
+		ID          string
+		AggregateID string
+		EventType   string
+		PayloadJSON []byte
+	}
+
+	events := make([]eventRow, 0, w.batchSize)
+	for rows.Next() {
+		var e eventRow
+		if err := rows.Scan(&e.ID, &e.AggregateID, &e.EventType, &e.PayloadJSON); err != nil {
+			return fmt.Errorf("scan outbox row: %w", err)
+		}
+		events = append(events, e)
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate outbox rows: %w", err)
+	}
+	if len(events) == 0 {
+		return nil
+	}
+
+	for _, e := range events {
+		stream := "chat.conv." + e.AggregateID
+		if err := w.redis.XAdd(ctx, &redis.XAddArgs{
+			Stream: stream,
+			Values: map[string]any{
+				"event_id":   e.ID,
+				"event_type": e.EventType,
+				"payload":    string(e.PayloadJSON),
+			},
+		}).Err(); err != nil {
+			_, _ = w.pool.Exec(
+				ctx,
+				`UPDATE outbox_events
+				 SET retry_count = retry_count + 1
+				 WHERE id = $1`,
+				e.ID,
+			)
+			return fmt.Errorf("xadd stream %s: %w", stream, err)
+		}
+
+		if _, err := w.pool.Exec(
+			ctx,
+			`UPDATE outbox_events
+			 SET status = 'published', published_at = now()
+			 WHERE id = $1`,
+			e.ID,
+		); err != nil {
+			return fmt.Errorf("mark outbox published: %w", err)
+		}
+	}
+	return nil
+}
