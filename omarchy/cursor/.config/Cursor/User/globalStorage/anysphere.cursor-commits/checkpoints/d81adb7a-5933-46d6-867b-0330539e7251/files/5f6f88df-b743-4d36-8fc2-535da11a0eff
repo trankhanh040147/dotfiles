@@ -1,0 +1,40 @@
+# Tardis
+
+Tardis is organized around the WAT model: **Workflows, Agents, Tools**.
+
+## Project Setup
+
+1. Copy `.env.example` to `.env` and fill in required secrets.
+2. Keep deterministic execution scripts in `tools/`.
+3. Keep workflow SOPs in `workflows/`.
+4. Use `.tmp/` for disposable intermediate files only.
+
+## Directory Structure
+
+- `.tmp/` - temporary files and scratch outputs (ignored by git)
+- `db/migrations/` - sqlite schema migrations
+- `contracts/` - canonical JSON schemas for tool input/output
+- `config/` - runtime policy and heuristic thresholds
+- `fixtures/` - deterministic seed and sample payloads
+- `tools/` - deterministic scripts used by workflows
+- `workflows/` - markdown SOPs that define inputs, steps, and outputs
+- `docs/` - metrics framework and architecture decisions
+- `.env` - local secrets and API keys (not committed)
+- `credentials.json`, `token.json` - local Google OAuth credentials (not committed)
+
+## Operating Principle
+
+Use workflows for decision logic and deterministic tools for execution. Keep final deliverables in cloud services, and treat local intermediates as replaceable.
+
+## Phase 1 Quickstart
+
+1. Initialize database:
+   - `python tools/init_db.py`
+2. Seed starter concept graph:
+   - `python tools/seed_concepts.py`
+3. Generate next concept:
+   - `python tools/scheduler.py --output .tmp/scheduler.json --limit 1`
+4. Apply sample failed event:
+   - `python tools/bkt_engine.py --event fixtures/sample_event_fail.json --output .tmp/bkt.json`
+5. Export report:
+   - `python tools/markdown_exporter.py --output-markdown .tmp/report.md --output-json .tmp/export.json`

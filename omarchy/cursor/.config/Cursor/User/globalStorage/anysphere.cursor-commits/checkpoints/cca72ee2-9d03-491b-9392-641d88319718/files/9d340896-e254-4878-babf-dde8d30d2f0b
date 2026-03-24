@@ -1,9 +1,0 @@
-# SYS-chat-messaging
-
-Chat 1-1 và group; message ordering, delivery, online status, scale.
-
-- [Câu hỏi / scope](prompt.md)
-- [Solution + giải thích](solution.md)
-- [Scaling & trade-offs](scaling_tradeoffs.md)
-- [Implementation blueprint (Profile B)](implementation_blueprint.md)
-- [Bài tập thực hành](exercises.md) → [Lời giải](exercise_solutions.md)

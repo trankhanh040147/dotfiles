@@ -7,15 +7,15 @@
         "workspaces": [],
         "folders": [
             {
-                "folderUri": "file:///home/khanh/src/0_github/portfolio/v1"
+                "folderUri": "file:///home/khanh/src/0_github/portfolio/v2"
             },
             {
-                "folderUri": "file:///home/khanh/src/0_github/portfolio/v2"
+                "folderUri": "file:///home/khanh/src/0_github/Tardis-1"
             }
         ],
         "emptyWindows": []
     },
-    "windowControlHeight": 29,
+    "windowControlHeight": 42,
     "profileAssociations": {
         "workspaces": {
             "file:///home/khanh/src/0_github/langtut": "__default__profile__",
@@ -25,21 +25,22 @@
             "file:///home/khanh/src/0_github/prepf": "__default__profile__",
             "file:///home/khanh/src/0_github/leetcode/prep": "__default__profile__",
             "file:///home/khanh/src/0_github/portfolio/v1": "__default__profile__",
-            "file:///home/khanh/src/0_github/portfolio/v2": "__default__profile__"
+            "file:///home/khanh/src/0_github/portfolio/v2": "__default__profile__",
+            "file:///home/khanh/src/0_github/Tardis-1": "__default__profile__"
         },
         "emptyWindows": {}
     },
     "windowsState": {
         "lastActiveWindow": {
-            "folder": "file:///home/khanh/src/0_github/portfolio/v2",
-            "backupPath": "/home/khanh/.config/Cursor/Backups/cffd439decd00c5c85c78d71ef45c04e",
+            "folder": "file:///home/khanh/src/0_github/Tardis-1",
+            "backupPath": "/home/khanh/.config/Cursor/Backups/43b8140b808f18e7e6847559c739a75d",
             "uiState": {
                 "mode": 0,
                 "x": 0,
                 "y": 0,
-                "width": 950,
-                "height": 1034,
-                "zoomLevel": -1
+                "width": 1920,
+                "height": 1080,
+                "zoomLevel": 1
             }
         },
         "openedWindows": []
@@ -70,7 +71,7 @@
             "titleBarHeight": 35,
             "activityBarWidth": 0,
             "sideBarWidth": 286,
-            "auxiliarySideBarWidth": 458,
+            "auxiliarySideBarWidth": 576,
             "statusBarHeight": 0,
             "windowBorder": false
         }
@@ -78,14 +79,15 @@
     "windowSplashWorkspaceOverride": {
         "layoutInfo": {
             "auxiliarySideBarWidth": [
-                458,
+                576,
                 [
                     "8c47d9128aa5e4ed06b6042cefd547bc",
                     "feaaea184728a7a01d22cd45bf733d68",
                     "e802da40862340c54c4e63837bcdb452",
                     "1925e0d509abedf8a2b71c93d16723fd",
                     "be69d6c65d19b8678cea7f3da666d6e8",
-                    "64faf2c33a3db583b6414203badc3799"
+                    "64faf2c33a3db583b6414203badc3799",
+                    "4f849abda1c22fa635eeb94dfc85f3b3"
                 ]
             ]
         }
