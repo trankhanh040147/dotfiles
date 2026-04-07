@@ -12,6 +12,7 @@ if status is-interactive
     mise activate fish | source
     zoxide init fish | source
     starship init fish | source
+    /home/linuxbrew/.linuxbrew/bin/brew shellenv | source
     # Only run fzf integration if it is a modern version
     # If this was breaking Tab, you will need to update fzf.
     if type -q fzf; and fzf --version | string match -q -r "^0\.[4-9]|^[1-9]"

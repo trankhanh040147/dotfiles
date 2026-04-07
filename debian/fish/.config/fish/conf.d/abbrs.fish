@@ -11,7 +11,7 @@ abbr -a xa 'xdg-open .'
 
 # Config Shortcuts
 abbr -a nnb 'nvim ~/.bashrc'
-abbr -a nnf 'nvim ~/.config/fish/config.fish'
+abbr -a nnf 'nvim ~/.config/fish'
 abbr -a nna 'nvim ~/.config/fish/conf.d/abbrs.fish'
 abbr -a nns 'nvim ~/.config/fish/conf.d/secrets.fish'
 abbr -a rlb 'source ~/.config/fish/config.fish'
@@ -21,6 +21,7 @@ abbr -a ai 'sudo apt-get install'
 abbr -a ar 'sudo apt-get remove'
 abbr -a au 'sudo apt-get update'
 abbr -a aug 'sudo apt-get upgrade'
+abbr -a aul 'ls -1 /etc/apt/sources.list.d/'
 
 # Docker
 abbr -a dstart 'docker start'
@@ -66,6 +67,7 @@ abbr -a gl 'git log --graph --pretty=format:"%C(yellow)%h%Creset%C(green)%d%Cres
 abbr -a gr 'go run'
 abbr -a grm 'go run main.go'
 abbr -a got 'go mod tidy'
+abbr -a gow 'go work init && go work use . && go work use ../e2e_tests'
 abbr -a lint 'golangci-lint run'
 abbr -a lzg lazygit
 abbr -a lzd lazydocker

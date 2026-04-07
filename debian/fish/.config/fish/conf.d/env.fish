@@ -1,4 +1,5 @@
 set -gx EDITOR nvim
+set -gx VISUAL nvim
 
 # Go Configuration
 set -gx GO111MODULE on
@@ -19,7 +20,7 @@ set -gx https_proxy $PROXY_URL
 set -gx HTTP_PROXY $PROXY_URL
 set -gx HTTPS_PROXY $PROXY_URL
 # set -gx no_proxy "localhost, 127.0.0.0/8, ::1, *.local, 169.254/16, 42.115.64.43, 10.1.0.0/8, *.signetcenter.systems, *.signetcenter.dev, *.signetsystem.com, *.uccsystem.com, *.systemprojects.net, 172.31.69.20, *.gti.local, mongo-key0-1, mongo-key0-1, mongo-key0-1, vcenter.signetcenter.dev, 10.1.128.100, 172.17.0.1, admin-hcns.uccsystem.com, hnth80-dev.uccsystem.com, sdrive-dev.uccsystem.com, sdrive-file-dev.uccsystem.com, lua.org, bun.sh, gitlab.signetcenter.systems, dev-nextjs.signetcenter.dev, idp-dev.uccsystem.com, mapp-developer-stg.uccsystem.com, qcb.cyguardservice.com, dvcchat-stg.uccsystem.com, idp-stg.uccsystem.com, stask-dev.uccsystem.com, official-cms-dev.uccsystem.com, dvcchat-dev.uccsystem.com, chrome.google.com, *.uccsystem.com, dichvucong.binhdinh.gov.vn, wks.cyguardservice.com, stackblitz.com, *.brave.com, google.com, open.spotify.com, perplexity.ai, bitly.com, releases.codeiumdata.com, google.com, api.githubcopilot.com, api.jetbrains.ai"
-set -gx no_proxy "localhost, 127.0.0.0/8, ::1, *.local, 169.254/16, 42.115.64.43, 10.1.0.0/8, *.signetcenter.systems, *.signetcenter.dev, *.signetsystem.com, *.systemprojects.net, 172.31.69.20, *.gti.local, mongo-key0-1, mongo-key0-1, mongo-key0-1, vcenter.signetcenter.dev, 10.1.128.100, 172.17.0.1, admin-hcns.uccsystem.com, ds-s3.signetcenter.dev, hnth80-dev.uccsystem.com, storages-dev.uccsystem.com, storages-stg.uccsystem.com, sdrive-dev.uccsystem.com, sdrive-file-dev.uccsystem.com, lua.org, bun.sh, gitlab.signetcenter.systems, dev-nextjs.signetcenter.dev, idp-dev.uccsystem.com, mapp-developer-stg.uccsystem.com, *.ngrok-free.app, reddit.com, dvcchat-dev.uccsystem.com,api.githubcopilot.com"
+set -gx no_proxy "localhost, 127.0.0.0/8, ::1, *.local, 169.254/16, 42.115.64.43, 10.1.0.0/8, *.signetcenter.systems, *.signetcenter.dev, *.signetsystem.com, *.systemprojects.net, 172.31.69.20, *.gti.local, mongo-key0-1, mongo-key0-1, mongo-key0-1, vcenter.signetcenter.dev, 10.1.128.100, 172.17.0.1, admin-hcns.uccsystem.com, ds-s3.signetcenter.dev, hnth80-dev.uccsystem.com, storages-dev.uccsystem.com, storages-stg.uccsystem.com, sdrive-dev.uccsystem.com, sdrive-file-dev.uccsystem.com, lua.org, bun.sh, gitlab.signetcenter.systems, dev-nextjs.signetcenter.dev, idp-dev.uccsystem.com, mapp-developer-stg.uccsystem.com, *.ngrok-free.app, reddit.com, dvcchat-dev.uccsystem.com,api.githubcopilot.com, mws1.signetsystem.com, sws1.signetsystem.com, api.shopaikey.com"
 set -gx NO_PROXY $no_proxy
 
 # Tool Specific Env

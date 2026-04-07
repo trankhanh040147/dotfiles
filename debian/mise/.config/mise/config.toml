@@ -2,6 +2,7 @@
 go = "1.25.5"
 node = "latest"
 fzf = "latest"
+opencode = "latest"
 
 [settings]
 http_timeout = "300s"
